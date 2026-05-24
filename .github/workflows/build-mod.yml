@@ -1,0 +1,79 @@
+# Reusable workflow: build a single mod and, on push to main, publish a release if its
+# manifest version hasn't been released yet. Called once per changed mod from ci.yml.
+name: Build mod
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: Display name (used in the release title).
+        required: true
+        type: string
+      dir:
+        description: Mod folder, relative to the repo root (e.g. levelup).
+        required: true
+        type: string
+      tag_prefix:
+        description: Tag/release prefix for this mod (e.g. levelup -> levelup-v1.0.0).
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      # Read the version out of the mod's manifest and derive the release tag.
+      - name: Read manifest version
+        id: meta
+        shell: bash
+        run: |
+          version="$(jq -r .Version "${{ inputs.dir }}/manifest.json")"
+          echo "version=$version"                              >> "$GITHUB_OUTPUT"
+          echo "tag=${{ inputs.tag_prefix }}-v$version"        >> "$GITHUB_OUTPUT"
+
+      # Compile. EnableModDeploy=false so CI doesn't overwrite your installed copy; the
+      # Mod Build package still produces the release .zip under bin/Release.
+      - name: Build
+        shell: bash
+        run: |
+          csproj="$(ls "${{ inputs.dir }}"/*.csproj | head -n1)"
+          dotnet build "$csproj" -c Release -p:EnableModDeploy=false
+
+      # Only consider releasing on a push to main. On PRs this (and the steps below) are
+      # skipped, so PRs just build to validate.
+      - name: Check whether this version is already released
+        id: check
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "${{ steps.meta.outputs.tag }}" >/dev/null 2>&1; then
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::${{ steps.meta.outputs.tag }} already exists - skipping release."
+          else
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Locate packaged zip
+        id: pkg
+        if: ${{ steps.check.outputs.should_release == 'true' }}
+        shell: bash
+        run: |
+          zip="$(find "${{ inputs.dir }}/bin/Release" -name '*.zip' | head -n1)"
+          if [ -z "$zip" ]; then echo "No .zip produced by the build" >&2; exit 1; fi
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        if: ${{ steps.check.outputs.should_release == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ inputs.name }} v${{ steps.meta.outputs.version }}
+          files: ${{ steps.pkg.outputs.zip }}
+          generate_release_notes: true

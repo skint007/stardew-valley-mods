@@ -1,0 +1,68 @@
+# Builds changed mods on every PR and push to main, and (on push to main) publishes a
+# GitHub Release for any mod whose manifest version has bumped.
+#
+#   - Pull request  -> build only the changed mod(s) to validate them. No release.
+#   - Push to main  -> build the changed mod(s); release each one whose manifest.json
+#                      version doesn't already have a matching tag.
+#
+# Runs on a self-hosted runner (your PC) because SMAPI mods must compile against the
+# locally-installed game DLLs, which can't be redistributed to GitHub-hosted runners.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Let the reusable build workflow create releases / tags.
+permissions:
+  contents: write
+
+# One run per ref; cancel an in-progress run when new commits arrive (the single
+# self-hosted runner can only do one thing at a time anyway).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Detect which mod folders changed so we only build/release those.
+  #
+  # Guard: only run for pushes (trusted) and PRs from this repo's own branches. Fork PRs
+  # are skipped so untrusted code can't execute on the self-hosted runner (this repo is
+  # public). Back this up with Settings -> Actions -> require approval for outside collaborators.
+  changes:
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: self-hosted
+    outputs:
+      levelup: ${{ steps.filter.outputs.levelup }}
+      betterfertilizer: ${{ steps.filter.outputs.betterfertilizer }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            levelup:
+              - 'levelup/**'
+            betterfertilizer:
+              - 'BetterFertilizer/**'
+
+  levelup:
+    needs: changes
+    if: ${{ needs.changes.outputs.levelup == 'true' }}
+    uses: ./.github/workflows/build-mod.yml
+    with:
+      name: Level Up
+      dir: levelup
+      tag_prefix: levelup
+
+  betterfertilizer:
+    needs: changes
+    if: ${{ needs.changes.outputs.betterfertilizer == 'true' }}
+    uses: ./.github/workflows/build-mod.yml
+    with:
+      name: Better Fertilizer
+      dir: BetterFertilizer
+      tag_prefix: betterfertilizer
