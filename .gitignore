@@ -1,0 +1,19 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.lscache
+.vs/
+.idea/
+.vscode/
+
+# Build output
+*.dll
+*.pdb
+*.exe
+
+# Mod packaging
+*.zip

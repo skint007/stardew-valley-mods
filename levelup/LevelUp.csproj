@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>LevelUp</RootNamespace>
+    <AssemblyName>LevelUp</AssemblyName>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <EnableHarmony>true</EnableHarmony>
+
+    <!--
+      The build auto-detects a standard Steam/GOG Stardew Valley install. If yours
+      is in a non-standard location, do NOT hardcode it here (keeps machine-specific
+      paths out of version control). Instead create a "LevelUp.csproj.user" file
+      next to this one (it is git-ignored) containing:
+
+        <Project>
+          <PropertyGroup>
+            <GamePath>/path/to/Stardew Valley</GamePath>
+          </PropertyGroup>
+        </Project>
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+using StardewValley;
+using StardewValley.TerrainFeatures;
+
+namespace BetterFertilizer;
+
+public class ExposedApi : IBetterFertilizerApi {
+    public bool ApplyFertilizerOnDirt(HoeDirt dirt, string itemId, Farmer who) {
+        return ModEntry.Plant.ApplyFertilizerOnDirt(dirt, itemId, who);
+    }
+
+    public bool IsFertilizerApplied(HoeDirt dirt, string itemId) {
+        return dirt.fertilizer.Value.Contains(itemId);
+    }
+
+    public void RegisterFertilizerType(IEnumerable<string> itemIds) {
+        ModEntry.Fertilizers.Add(itemIds.ToList());
+    }
+
+    public bool FertilizeFruitTree(FruitTree tree) {
+        return ModEntry.FruitTreeSupport.Fertilize(tree);
+    }
+
+    public bool IsFruitTreeFertilized(FruitTree tree) {
+        return ModEntry.FruitTreeSupport.IsFertilized(tree);
+    }
+}

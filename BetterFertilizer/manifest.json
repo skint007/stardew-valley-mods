@@ -1,0 +1,16 @@
+{
+  "Name": "Better Fertilizer",
+  "Author": "skint007",
+  "Version": "1.2.0",
+  "Description": "Configurable fertilizer overhaul: multi-fertilizer stacking, fertilize anytime, keep fertilizer across seasons, tunable potencies/craft amounts - plus Tree Fertilizer that also works on fruit trees (grows them even when crowded and matures them faster).",
+  "UniqueID": "skint007.BetterFertilizer",
+  "EntryDll": "BetterFertilizer.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ]
+}
