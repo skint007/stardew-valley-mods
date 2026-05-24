@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/nexus-cover.png" alt="Level Up" width="800">
+</p>
+
 # Level Up
 
 A [Stardew Valley](https://www.stardewvalley.net/) [SMAPI](https://smapi.io/) mod
