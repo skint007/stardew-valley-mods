@@ -1,7 +1,7 @@
 {
   "Name": "Level Up",
   "Author": "skint007",
-  "Version": "1.1.0",
+  "Version": "1.1.1",
   "Description": "Adds a meta player-level system earned from in-world actions (kills, days, quests), with milestone-based stat bonuses fully configurable via GMCM.",
   "UniqueID": "skint007.LevelUp",
   "EntryDll": "LevelUp.dll",
