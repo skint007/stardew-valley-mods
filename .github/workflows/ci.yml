@@ -37,10 +37,10 @@ jobs:
       levelup: ${{ steps.filter.outputs.levelup }}
       betterfertilizer: ${{ steps.filter.outputs.betterfertilizer }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
