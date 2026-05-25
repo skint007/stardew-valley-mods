@@ -42,6 +42,9 @@ that adds a meta **player-level** system on top of the vanilla skills.
   reverts your character.
 - **Console commands** for inspecting and adjusting progress.
 - **Soft GMCM dependency:** works without it, you just lose the in-game config UI.
+- **Fully localizable:** all player-facing text — the config menu, the level-up
+  toast, the milestone buff, and the XP-bar HUD — reads from `i18n/`, so the mod
+  can be translated (see [Translations](#translations)).
 - **No Content Patcher / asset edits** — pure C# logic.
 
 ## Requirements
@@ -127,6 +130,30 @@ slower), **Custom** (your own base + growth).
 | New area          | 25                          | off     |
 | Skill level-up    | 150 per level               | on      |
 | Skill XP (tasks)  | 10% of vanilla skill XP     | on      |
+
+## Translations
+
+All player-facing text is localized through SMAPI's `i18n` system: the GMCM config
+menu, the level-up toast, the milestone buff name, and the XP-bar HUD (level label,
+`+N XP` popup, hover tooltip). English lives in
+[`i18n/default.json`](i18n/default.json) as `key: value` pairs.
+
+To add a language, copy `default.json` to `i18n/<code>.json` (e.g. `de.json`,
+`fr.json`, `zh.json` — [SMAPI's language codes](https://stardewvalleywiki.com/Modding:Translations#Translation_files))
+and translate the values, leaving the keys untouched. SMAPI loads the file
+matching the player's language, falls back to `default.json` for any missing key,
+and the menu re-reads strings each time it opens — so language changes apply
+without a restart.
+
+Notes for translators:
+
+- Tokens like `{{number}}`, `{{level}}`, and `{{name}}` are placeholders filled in
+  at runtime; keep them as-is.
+- The **XP Curve** and **Apply preset** dropdowns translate only their *displayed*
+  labels (`curve.preset.value.*`, `preset.value.*`). The stored values stay
+  English, so translating them is purely cosmetic and never touches `config.json`.
+- Milestone *names* (e.g. "Veteran") are player-editable config data, not UI
+  strings, so they aren't translated.
 
 ## Building from source
 

@@ -14,6 +14,8 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-25
+
 ### Added
 
 - **Multiplayer support** with independent per-player levels. Each farmer earns
@@ -25,6 +27,14 @@ the entry you add below.
   - *Skill level-up* — XP when a vanilla skill levels up (150 × levels gained).
   - *Scale with skill XP* — meta XP as a fraction (default 10%) of all vanilla
     skill XP earned, so any productive task feeds player levels.
+- **Localization.** All player-facing text is now pulled from `i18n/` instead of
+  being hardcoded: the entire GMCM config menu (labels, tooltips, section titles,
+  dropdowns), the level-up toast, the milestone buff name, and the XP-bar HUD
+  (level label, `+N XP` popup, hover tooltip). Translators can add a language by
+  dropping a `<code>.json` next to `default.json`; SMAPI picks it up automatically
+  and the GMCM menu reflects in-game language changes without a restart. Preset
+  dropdown values keep stable English keys, so existing `config.json` files are
+  unaffected.
 
 ### Changed
 
@@ -64,5 +74,6 @@ First complete release.
 - Generic Mod Config Menu integration for all settings (soft dependency).
 - Console commands for inspecting/adjusting progress.
 
-[Unreleased]: https://example.com/compare/v1.0.0...HEAD
+[Unreleased]: https://example.com/compare/v1.1.0...HEAD
+[1.1.0]: https://example.com/compare/v1.0.0...v1.1.0
 [1.0.0]: https://example.com/releases/v1.0.0

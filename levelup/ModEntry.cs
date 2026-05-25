@@ -39,9 +39,9 @@ public class ModEntry : Mod
         _saveData = new SaveDataManager(Monitor);
         _calculator = new LevelCalculator(_config.Curve, _config.LevelCap);
         _xpTracker = new XpTracker(_config, _saveData, _calculator, Monitor);
-        _bonusApplier = new BonusApplier(_config, _saveData, Monitor);
-        _notifier = new LevelUpNotifier(_config, Monitor);
-        _xpBar = new XpBarHud(_config, _saveData, _calculator, Monitor);
+        _bonusApplier = new BonusApplier(_config, _saveData, helper.Translation, Monitor);
+        _notifier = new LevelUpNotifier(_config, helper.Translation, Monitor);
+        _xpBar = new XpBarHud(_config, _saveData, _calculator, helper.Translation, Monitor);
         _xpTracker.XpAwarded += _xpBar.RegisterGain;
         _consoleCommands = new ConsoleCommands(_config, _saveData, _calculator, _xpTracker, _bonusApplier, _notifier, Monitor);
         _consoleCommands.Register(helper.ConsoleCommands);

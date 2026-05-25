@@ -25,6 +25,7 @@ public class BonusApplier
 
     private readonly ModConfig _config;
     private readonly SaveDataManager _saveData;
+    private readonly ITranslationHelper _i18n;
     private readonly IMonitor _monitor;
 
     /// <summary>Current cumulative XP-gain bonus, exposed for the experience-received handler.</summary>
@@ -44,10 +45,11 @@ public class BonusApplier
     private float _hpAccumulator;
     private float _energyAccumulator;
 
-    public BonusApplier(ModConfig config, SaveDataManager saveData, IMonitor monitor)
+    public BonusApplier(ModConfig config, SaveDataManager saveData, ITranslationHelper i18n, IMonitor monitor)
     {
         _config = config;
         _saveData = saveData;
+        _i18n = i18n;
         _monitor = monitor;
     }
 
@@ -206,14 +208,14 @@ public class BonusApplier
 
         var buff = new Buff(
             id: BuffId,
-            source: "Level Up",
-            displaySource: "Level Up",
+            source: "Level Up", // stable internal identifier; not shown to the player
+            displaySource: _i18n.Get("buff.source"),
             duration: Buff.ENDLESS,
             iconTexture: null,
             iconSheetIndex: -1,
             effects: effects,
             isDebuff: false,
-            displayName: "Level Up Milestones");
+            displayName: _i18n.Get("buff.name"));
 
         // Replace any existing buff of the same id.
         player.buffs.Remove(BuffId);

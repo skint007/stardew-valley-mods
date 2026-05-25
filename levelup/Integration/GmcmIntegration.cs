@@ -7,6 +7,12 @@ namespace LevelUp.Integration;
 /// <summary>
 /// Wires the mod's config into Generic Mod Config Menu (GMCM).
 /// Call <see cref="Register"/> from a GameLaunched handler.
+///
+/// All visible strings are pulled from the mod's i18n files via <see cref="T(string)"/>, so the
+/// config UI is localized. GMCM re-reads the label/tooltip funcs each time the menu opens, so a
+/// language change takes effect without a restart. Dropdown <em>values</em> (curve + milestone
+/// presets) keep their stable English keys — only their displayed labels are translated, via
+/// <c>formatAllowedValue</c>.
 /// </summary>
 public class GmcmIntegration
 {
@@ -35,6 +41,37 @@ public class GmcmIntegration
         _onSave = onSave;
     }
 
+    // ── Translation helpers ───────────────────────────────────────────────────
+
+    /// <summary>Look up a translation by key. Relies on the implicit Translation→string cast.</summary>
+    private string T(string key) => _helper.Translation.Get(key);
+
+    /// <summary>Look up a translation by key with token replacements (e.g. <c>{{number}}</c>).</summary>
+    private string T(string key, object tokens) => _helper.Translation.Get(key, tokens);
+
+    /// <summary>Translate a milestone-preset value for display; the stored value stays English.</summary>
+    private string TranslatePresetName(string value) => value switch
+    {
+        MilestonePresets.KeepCurrent => T("preset.value.keep-current"),
+        "Balanced"    => T("preset.value.balanced"),
+        "Combat"      => T("preset.value.combat"),
+        "Survivalist" => T("preset.value.survivalist"),
+        "Explorer"    => T("preset.value.explorer"),
+        "Minimalist"  => T("preset.value.minimalist"),
+        "Empty"       => T("preset.value.empty"),
+        _             => value,
+    };
+
+    /// <summary>Translate a curve-preset value for display; the stored enum value stays English.</summary>
+    private string TranslateCurvePreset(string value) => value switch
+    {
+        "Casual"   => T("curve.preset.value.casual"),
+        "Standard" => T("curve.preset.value.standard"),
+        "Hardcore" => T("curve.preset.value.hardcore"),
+        "Custom"   => T("curve.preset.value.custom"),
+        _          => value,
+    };
+
     public void Register()
     {
         var api = _helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -51,70 +88,70 @@ public class GmcmIntegration
             save: _onSave);
 
         // ── Main page ───────────────────────────────────────────────────────
-        api.AddSectionTitle(_manifest, () => "General");
+        api.AddSectionTitle(_manifest, () => T("config.section.general"));
 
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().Enabled,
             setValue: v => _getConfig().Enabled = v,
-            name: () => "Enable mod",
-            tooltip: () => "Master switch. When off, no XP is awarded and no bonuses are applied.");
+            name: () => T("config.enabled.name"),
+            tooltip: () => T("config.enabled.tooltip"));
 
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().LevelCap,
             setValue: v => _getConfig().LevelCap = v,
-            name: () => "Level cap",
-            tooltip: () => "Maximum level the player can reach.",
+            name: () => T("config.level-cap.name"),
+            tooltip: () => T("config.level-cap.tooltip"),
             min: 10, max: 999, interval: 1);
 
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().ShowXpBar,
             setValue: v => _getConfig().ShowXpBar = v,
-            name: () => "Show XP bar",
-            tooltip: () => "Display an XP bar next to the HP and Energy bars.");
+            name: () => T("config.show-xp-bar.name"),
+            tooltip: () => T("config.show-xp-bar.tooltip"));
 
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().ShowLevelUpNotification,
             setValue: v => _getConfig().ShowLevelUpNotification = v,
-            name: () => "Show level-up notification");
+            name: () => T("config.show-notification.name"));
 
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().PlayLevelUpSound,
             setValue: v => _getConfig().PlayLevelUpSound = v,
-            name: () => "Play level-up sound");
+            name: () => T("config.play-sound.name"));
 
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().DebugLogging,
             setValue: v => _getConfig().DebugLogging = v,
-            name: () => "Debug logging",
-            tooltip: () => "Verbose console output. Useful for troubleshooting.");
+            name: () => T("config.debug-logging.name"),
+            tooltip: () => T("config.debug-logging.tooltip"));
 
         api.AddKeybind(_manifest,
             getValue: () => _getConfig().OpenMenuHotkey,
             setValue: v => _getConfig().OpenMenuHotkey = v,
-            name: () => "Open menu hotkey",
-            tooltip: () => "Press this key in-game to jump straight to this options menu. Leave unset to disable.");
+            name: () => T("config.open-menu-hotkey.name"),
+            tooltip: () => T("config.open-menu-hotkey.tooltip"));
 
-        api.AddPageLink(_manifest, "xp-sources", () => "→ XP Sources");
-        api.AddPageLink(_manifest, "curve", () => "→ XP Curve");
-        api.AddPageLink(_manifest, "milestones", () => "→ Milestones");
+        api.AddPageLink(_manifest, "xp-sources", () => T("link.xp-sources"));
+        api.AddPageLink(_manifest, "curve", () => T("link.curve"));
+        api.AddPageLink(_manifest, "milestones", () => T("link.milestones"));
 
         // ── XP Sources page ─────────────────────────────────────────────────
-        api.AddPage(_manifest, "xp-sources", () => "XP Sources");
+        api.AddPage(_manifest, "xp-sources", () => T("page.xp-sources"));
         AddXpSourcesPage(api);
 
         // ── Curve page ──────────────────────────────────────────────────────
-        api.AddPage(_manifest, "curve", () => "XP Curve");
+        api.AddPage(_manifest, "curve", () => T("page.curve"));
         AddCurvePage(api);
 
         // ── Milestones index page ───────────────────────────────────────────
-        api.AddPage(_manifest, "milestones", () => "Milestones");
+        api.AddPage(_manifest, "milestones", () => T("page.milestones"));
         AddMilestonesIndexPage(api);
 
         // ── One sub-page per milestone slot ─────────────────────────────────
         for (int i = 0; i < ModConfig.MilestoneSlotCount; i++)
         {
             int slotIndex = i; // capture for closures
-            api.AddPage(_manifest, $"milestone-{slotIndex}", () => $"Milestone Slot {slotIndex + 1}");
+            api.AddPage(_manifest, $"milestone-{slotIndex}", () => T("page.milestone-slot", new { number = slotIndex + 1 }));
             AddMilestonePage(api, slotIndex);
         }
     }
@@ -133,138 +170,136 @@ public class GmcmIntegration
 
     private void AddXpSourcesPage(IGenericModConfigMenuApi api)
     {
-        api.AddSectionTitle(_manifest, () => "Monster kills");
+        api.AddSectionTitle(_manifest, () => T("xp.section.monster-kills"));
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.MonsterKillEnabled,
             setValue: v => _getConfig().XpSources.MonsterKillEnabled = v,
-            name: () => "Enabled");
+            name: () => T("common.enabled.name"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.MonsterXpPerMaxHp,
             setValue: v => _getConfig().XpSources.MonsterXpPerMaxHp = v,
-            name: () => "XP per max HP",
-            tooltip: () => "A 100-HP monster gives this × 100 XP.",
+            name: () => T("xp.monster-per-hp.name"),
+            tooltip: () => T("xp.monster-per-hp.tooltip"),
             min: 0f, max: 10f, interval: 0.1f);
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.BossKillMultiplier,
             setValue: v => _getConfig().XpSources.BossKillMultiplier = v,
-            name: () => "Boss multiplier",
+            name: () => T("xp.boss-multiplier.name"),
             min: 1f, max: 50f, interval: 0.5f);
 
-        api.AddSectionTitle(_manifest, () => "Day survived");
+        api.AddSectionTitle(_manifest, () => T("xp.section.day-survived"));
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.DaySurvivedEnabled,
             setValue: v => _getConfig().XpSources.DaySurvivedEnabled = v,
-            name: () => "Enabled");
+            name: () => T("common.enabled.name"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.DaySurvivedXp,
             setValue: v => _getConfig().XpSources.DaySurvivedXp = v,
-            name: () => "XP per day",
+            name: () => T("xp.day-xp.name"),
             min: 0, max: 10000, interval: 5);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.DaySurvivedSkipOnPassout,
             setValue: v => _getConfig().XpSources.DaySurvivedSkipOnPassout = v,
-            name: () => "Skip on passout");
+            name: () => T("xp.skip-passout.name"));
 
-        api.AddSectionTitle(_manifest, () => "Quests");
+        api.AddSectionTitle(_manifest, () => T("xp.section.quests"));
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.QuestEnabled,
             setValue: v => _getConfig().XpSources.QuestEnabled = v,
-            name: () => "Enabled");
+            name: () => T("common.enabled.name"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.StoryQuestXp,
             setValue: v => _getConfig().XpSources.StoryQuestXp = v,
-            name: () => "Story quest XP",
+            name: () => T("xp.story-quest.name"),
             min: 0, max: 10000, interval: 10);
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.HelpWantedQuestXp,
             setValue: v => _getConfig().XpSources.HelpWantedQuestXp = v,
-            name: () => "Help Wanted XP",
+            name: () => T("xp.help-wanted.name"),
             min: 0, max: 10000, interval: 5);
 
-        api.AddSectionTitle(_manifest, () => "Optional");
+        api.AddSectionTitle(_manifest, () => T("xp.section.optional"));
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.FestivalEnabled,
             setValue: v => _getConfig().XpSources.FestivalEnabled = v,
-            name: () => "Festival attendance");
+            name: () => T("xp.festival.name"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.FestivalXp,
             setValue: v => _getConfig().XpSources.FestivalXp = v,
-            name: () => "Festival XP",
+            name: () => T("xp.festival-xp.name"),
             min: 0, max: 10000, interval: 5);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.NewAreaEnabled,
             setValue: v => _getConfig().XpSources.NewAreaEnabled = v,
-            name: () => "New area discovery");
+            name: () => T("xp.new-area.name"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.NewAreaXp,
             setValue: v => _getConfig().XpSources.NewAreaXp = v,
-            name: () => "New area XP",
+            name: () => T("xp.new-area-xp.name"),
             min: 0, max: 10000, interval: 5);
 
-        api.AddSectionTitle(_manifest, () => "Skills");
+        api.AddSectionTitle(_manifest, () => T("xp.section.skills"));
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.SkillLevelUpEnabled,
             setValue: v => _getConfig().XpSources.SkillLevelUpEnabled = v,
-            name: () => "Skill level-up",
-            tooltip: () => "Award XP when a vanilla skill (Farming, Fishing, Foraging, Mining, Combat) levels up.");
+            name: () => T("xp.skill-levelup.name"),
+            tooltip: () => T("xp.skill-levelup.tooltip"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.SkillLevelUpXp,
             setValue: v => _getConfig().XpSources.SkillLevelUpXp = v,
-            name: () => "XP per skill level",
+            name: () => T("xp.skill-levelup-xp.name"),
             min: 0, max: 10000, interval: 25);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.SkillXpEnabled,
             setValue: v => _getConfig().XpSources.SkillXpEnabled = v,
-            name: () => "Scale with skill XP",
-            tooltip: () => "Earn meta XP as a fraction of all vanilla skill XP (farming, fishing, chopping, mining, foraging, combat).");
+            name: () => T("xp.skill-xp.name"),
+            tooltip: () => T("xp.skill-xp.tooltip"));
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.SkillXpRate,
             setValue: v => _getConfig().XpSources.SkillXpRate = v,
-            name: () => "Skill XP rate",
-            tooltip: () => "Fraction of earned skill XP converted to meta XP. 0.10 = 10%.",
+            name: () => T("xp.skill-xp-rate.name"),
+            tooltip: () => T("xp.skill-xp-rate.tooltip"),
             min: 0f, max: 2f, interval: 0.05f);
     }
 
     private void AddCurvePage(IGenericModConfigMenuApi api)
     {
-        api.AddParagraph(_manifest, () => "XP needed per level grows as: base × growth^(level-1)");
+        api.AddParagraph(_manifest, () => T("curve.paragraph"));
 
         api.AddTextOption(_manifest,
             getValue: () => _getConfig().Curve.Preset.ToString(),
             setValue: v => { if (Enum.TryParse<CurvePreset>(v, out var p)) _getConfig().Curve.Preset = p; },
-            name: () => "Preset",
-            allowedValues: new[] { "Casual", "Standard", "Hardcore", "Custom" });
+            name: () => T("curve.preset.name"),
+            allowedValues: new[] { "Casual", "Standard", "Hardcore", "Custom" },
+            formatAllowedValue: TranslateCurvePreset);
 
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().Curve.BaseXp,
             setValue: v => _getConfig().Curve.BaseXp = v,
-            name: () => "Base XP (Custom only)",
-            tooltip: () => "XP for level 1 → 2. Only used when preset is Custom.",
+            name: () => T("curve.base.name"),
+            tooltip: () => T("curve.base.tooltip"),
             min: 10, max: 10000, interval: 5);
 
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().Curve.GrowthRate,
             setValue: v => _getConfig().Curve.GrowthRate = v,
-            name: () => "Growth rate (Custom only)",
-            tooltip: () => "Per-level multiplier. 1.0 = linear, 1.15 = +15% each level.",
+            name: () => T("curve.growth.name"),
+            tooltip: () => T("curve.growth.tooltip"),
             min: 1.00f, max: 2.00f, interval: 0.01f);
     }
 
     private void AddMilestonesIndexPage(IGenericModConfigMenuApi api)
     {
-        api.AddParagraph(_manifest, () =>
-            "20 milestone slots. Enable a slot, set its level + name, then assign bonuses. " +
-            "All enabled milestones whose level you've reached are summed and applied.");
+        api.AddParagraph(_manifest, () => T("milestones.paragraph"));
 
-        api.AddSectionTitle(_manifest, () => "Preset");
+        api.AddSectionTitle(_manifest, () => T("milestones.section.preset"));
         api.AddTextOption(_manifest,
             getValue: () => _getConfig().ApplyMilestonePreset,
             setValue: v => _getConfig().ApplyMilestonePreset = v,
-            name: () => "Apply preset",
-            tooltip: () =>
-                "Pick a play-style preset, then Save to overwrite all 20 slots with it. " +
-                "Every slot stays editable afterward; this resets to \"(keep current)\" once applied.",
-            allowedValues: MilestonePresets.Names);
+            name: () => T("milestones.apply-preset.name"),
+            tooltip: () => T("milestones.apply-preset.tooltip"),
+            allowedValues: MilestonePresets.Names,
+            formatAllowedValue: TranslatePresetName);
 
         for (int i = 0; i < ModConfig.MilestoneSlotCount; i++)
         {
@@ -273,8 +308,9 @@ public class GmcmIntegration
                 text: () =>
                 {
                     var m = _getConfig().Milestones[slotIndex];
-                    if (!m.Enabled) return $"Slot {slotIndex + 1}: (disabled)";
-                    return $"Slot {slotIndex + 1}: Lv {m.Level} — {(string.IsNullOrEmpty(m.Name) ? "(unnamed)" : m.Name)}";
+                    if (!m.Enabled) return T("milestones.link.disabled", new { number = slotIndex + 1 });
+                    string name = string.IsNullOrEmpty(m.Name) ? T("milestones.unnamed") : m.Name;
+                    return T("milestones.link.active", new { number = slotIndex + 1, level = m.Level, name });
                 });
         }
     }
@@ -284,79 +320,79 @@ public class GmcmIntegration
         // Local helpers to keep registrations tight
         MilestoneConfig M() => _getConfig().Milestones[slotIndex];
 
-        api.AddSectionTitle(_manifest, () => "Slot");
+        api.AddSectionTitle(_manifest, () => T("milestone.section.slot"));
         api.AddBoolOption(_manifest,
             getValue: () => M().Enabled, setValue: v => M().Enabled = v,
-            name: () => "Enabled");
+            name: () => T("common.enabled.name"));
         api.AddNumberOption(_manifest,
             getValue: () => M().Level, setValue: v => M().Level = v,
-            name: () => "Required level",
+            name: () => T("milestone.level.name"),
             min: 1, max: 999, interval: 1);
         api.AddTextOption(_manifest,
             getValue: () => M().Name, setValue: v => M().Name = v,
-            name: () => "Name");
+            name: () => T("milestone.name.name"));
 
-        api.AddSectionTitle(_manifest, () => "Vitals");
+        api.AddSectionTitle(_manifest, () => T("milestone.section.vitals"));
         api.AddNumberOption(_manifest,
             getValue: () => M().MaxHp, setValue: v => M().MaxHp = v,
-            name: () => "+Max HP", min: 0, max: 9999, interval: 1);
+            name: () => T("milestone.max-hp.name"), min: 0, max: 9999, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().MaxEnergy, setValue: v => M().MaxEnergy = v,
-            name: () => "+Max Energy", min: 0, max: 9999, interval: 1);
+            name: () => T("milestone.max-energy.name"), min: 0, max: 9999, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().HealthRegenPerMinute, setValue: v => M().HealthRegenPerMinute = v,
-            name: () => "+HP regen / min",
-            tooltip: () => "Health restored per real-time minute while time is passing. 0 disables.",
+            name: () => T("milestone.hp-regen.name"),
+            tooltip: () => T("milestone.hp-regen.tooltip"),
             min: 0f, max: 100f, interval: 0.5f);
         api.AddNumberOption(_manifest,
             getValue: () => M().EnergyRegenPerMinute, setValue: v => M().EnergyRegenPerMinute = v,
-            name: () => "+Energy regen / min",
-            tooltip: () => "Energy restored per real-time minute while time is passing. 0 disables.",
+            name: () => T("milestone.energy-regen.name"),
+            tooltip: () => T("milestone.energy-regen.tooltip"),
             min: 0f, max: 100f, interval: 0.5f);
 
-        api.AddSectionTitle(_manifest, () => "Combat");
+        api.AddSectionTitle(_manifest, () => T("milestone.section.combat"));
         api.AddNumberOption(_manifest,
             getValue: () => M().Attack, setValue: v => M().Attack = v,
-            name: () => "+Attack", min: 0, max: 999, interval: 1);
+            name: () => T("milestone.attack.name"), min: 0, max: 999, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().Defense, setValue: v => M().Defense = v,
-            name: () => "+Defense", min: 0, max: 999, interval: 1);
+            name: () => T("milestone.defense.name"), min: 0, max: 999, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().CritChance, setValue: v => M().CritChance = v,
-            name: () => "+Crit chance",
-            tooltip: () => "Additive multiplier. 0.05 = +5% crit.",
+            name: () => T("milestone.crit.name"),
+            tooltip: () => T("milestone.crit.tooltip"),
             min: 0f, max: 2f, interval: 0.01f);
         api.AddNumberOption(_manifest,
             getValue: () => M().WeaponSpeed, setValue: v => M().WeaponSpeed = v,
-            name: () => "+Weapon speed",
-            tooltip: () => "Additive multiplier. 0.05 = +5% swing speed.",
+            name: () => T("milestone.weapon-speed.name"),
+            tooltip: () => T("milestone.weapon-speed.tooltip"),
             min: 0f, max: 2f, interval: 0.01f);
 
-        api.AddSectionTitle(_manifest, () => "Utility");
+        api.AddSectionTitle(_manifest, () => T("milestone.section.utility"));
         api.AddNumberOption(_manifest,
             getValue: () => M().MovementSpeed, setValue: v => M().MovementSpeed = v,
-            name: () => "+Movement speed",
-            tooltip: () => "Raw game units. +1 is roughly +20% walk speed.",
+            name: () => T("milestone.movement.name"),
+            tooltip: () => T("milestone.movement.tooltip"),
             min: 0f, max: 10f, interval: 0.1f);
         api.AddNumberOption(_manifest,
             getValue: () => M().MagneticRadius, setValue: v => M().MagneticRadius = v,
-            name: () => "+Magnetic radius",
-            tooltip: () => "Game units. Vanilla base is 128.",
+            name: () => T("milestone.magnetic.name"),
+            tooltip: () => T("milestone.magnetic.tooltip"),
             min: 0, max: 999, interval: 8);
         api.AddNumberOption(_manifest,
             getValue: () => M().Luck, setValue: v => M().Luck = v,
-            name: () => "+Luck", min: 0, max: 99, interval: 1);
+            name: () => T("milestone.luck.name"), min: 0, max: 99, interval: 1);
 
-        api.AddSectionTitle(_manifest, () => "Resource");
+        api.AddSectionTitle(_manifest, () => T("milestone.section.resource"));
         api.AddNumberOption(_manifest,
             getValue: () => M().XpMultiplier, setValue: v => M().XpMultiplier = v,
-            name: () => "+XP gain",
-            tooltip: () => "Additive bonus to all skill XP. 0.10 = +10% XP.",
+            name: () => T("milestone.xp-gain.name"),
+            tooltip: () => T("milestone.xp-gain.tooltip"),
             min: 0f, max: 5f, interval: 0.01f);
         api.AddNumberOption(_manifest,
             getValue: () => M().SellPriceBonus, setValue: v => M().SellPriceBonus = v,
-            name: () => "+Sell price",
-            tooltip: () => "Additive bonus to shop sell prices. 0.05 = +5%.",
+            name: () => T("milestone.sell-price.name"),
+            tooltip: () => T("milestone.sell-price.tooltip"),
             min: 0f, max: 5f, interval: 0.01f);
     }
 }

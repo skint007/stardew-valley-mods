@@ -11,11 +11,13 @@ namespace LevelUp.Systems;
 public class LevelUpNotifier
 {
     private readonly ModConfig _config;
+    private readonly ITranslationHelper _i18n;
     private readonly IMonitor _monitor;
 
-    public LevelUpNotifier(ModConfig config, IMonitor monitor)
+    public LevelUpNotifier(ModConfig config, ITranslationHelper i18n, IMonitor monitor)
     {
         _config = config;
+        _i18n = i18n;
         _monitor = monitor;
     }
 
@@ -37,8 +39,8 @@ public class LevelUpNotifier
         if (_config.ShowLevelUpNotification)
         {
             string text = crossed != null && !string.IsNullOrWhiteSpace(crossed.Name)
-                ? $"Level {newLevel}! You are now a {crossed.Name}."
-                : $"Level Up! You are now level {newLevel}.";
+                ? _i18n.Get("notify.milestone", new { level = newLevel, name = crossed.Name })
+                : _i18n.Get("notify.level-up", new { level = newLevel });
 
             Game1.addHUDMessage(new HUDMessage(text, HUDMessage.achievement_type)
             {

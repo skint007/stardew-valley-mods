@@ -41,6 +41,7 @@ public class XpBarHud
     private readonly ModConfig _config;
     private readonly SaveDataManager _saveData;
     private readonly LevelCalculator _calculator;
+    private readonly ITranslationHelper _i18n;
     private readonly IMonitor _monitor;
 
     // Hover text computed during Draw() (pre-HUD) but drawn in DrawTooltip() (post-HUD), so
@@ -51,11 +52,13 @@ public class XpBarHud
         ModConfig config,
         SaveDataManager saveData,
         LevelCalculator calculator,
+        ITranslationHelper i18n,
         IMonitor monitor)
     {
         _config = config;
         _saveData = saveData;
         _calculator = calculator;
+        _i18n = i18n;
         _monitor = monitor;
     }
 
@@ -108,7 +111,7 @@ public class XpBarHud
         int left      = vw / 2 - TotalWidth / 2;
 
         // ── Layout: LVL box sized to its text, XP box takes the rest ─────────────────────
-        string label   = $"LVL {level}";
+        string label   = _i18n.Get("hud.level-label", new { level });
         int    labelW  = SpriteText.getWidthOfString(label);
         int    lvlBoxW = Math.Max(140, labelW + 2 * Border + 16);
         int    xpBoxX  = left + lvlBoxW + BoxGap;
@@ -164,7 +167,7 @@ public class XpBarHud
                 float rise  = (1f - t) * 38f;
                 float alpha = t > 0.30f ? 1f : t / 0.30f;
 
-                string txt    = $"+{_popupAmount:N0} XP";
+                string txt    = _i18n.Get("hud.xp-popup", new { amount = _popupAmount.ToString("N0") });
                 var    font   = Game1.smallFont;
                 Vector2 size   = font.MeasureString(txt);
                 Vector2 origin = size / 2f;
@@ -188,8 +191,14 @@ public class XpBarHud
             long needed = _calculator.XpToNextLevel(level);
             long into   = _calculator.XpIntoCurrentLevel(totalXp, level);
             _hoverTip = level >= _calculator.LevelCap
-                ? $"Level {level} (MAX)\n{totalXp:N0} total XP"
-                : $"Level {level}\n{into:N0} / {needed:N0} XP\nTotal: {totalXp:N0}";
+                ? _i18n.Get("hud.tooltip.max", new { level, total = totalXp.ToString("N0") })
+                : _i18n.Get("hud.tooltip.progress", new
+                {
+                    level,
+                    into = into.ToString("N0"),
+                    needed = needed.ToString("N0"),
+                    total = totalXp.ToString("N0"),
+                });
         }
     }
 
