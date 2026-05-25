@@ -26,11 +26,15 @@ that adds a meta **player-level** system on top of the vanilla skills.
   skill XP (so any productive task — farming, fishing, mining, foraging,
   combat — feeds it).
 - **20 milestone slots.** Each enabled milestone you reach grants cumulative
-  bonuses: max HP, max energy, attack, defense, crit chance, weapon speed,
-  movement speed, magnetic radius, luck, skill-XP gain, and sell price.
-- **XP bar HUD** matching the vanilla HP/Energy bars, showing your level in the
-  game's native number font, with a floating `+N XP` popup on every gain and a
-  hover tooltip. It also adds hover tooltips for the vanilla HP/Energy bars.
+  bonuses: max HP, max energy, HP/energy regen, attack, defense, crit chance,
+  weapon speed, movement speed, magnetic radius, luck, skill-XP gain, and sell
+  price.
+- **Passive HP/energy regen** as a milestone bonus, ticking while time passes
+  (paused in menus, events, and sleep).
+- **Horizontal XP bar HUD** centered above the toolbar: a `LVL <n>` plate plus a
+  progress bar, with a floating `+N XP` popup on every gain and a hover tooltip.
+- **Configurable hotkey** to open the mod's settings menu directly (unset by
+  default).
 - **Level-up notification:** an on-screen toast and sound, using the milestone
   name when you cross one.
 - **Save-safe:** stat bonuses never get baked into your save file (they're
@@ -70,10 +74,14 @@ The first 9 of the 20 slots are pre-populated (all editable):
 | 15    | Journeyman  | +10 max HP, +10 max energy, +1 luck |
 | 20    | Adept       | +5% crit chance, +5% weapon speed |
 | 25    | Veteran     | +2 attack, +2 defense, +64 magnetic radius |
-| 35    | Expert      | +20 max HP, +20 max energy, +5% sell price |
+| 35    | Expert      | +20 max HP, +20 max energy, +5% sell price, +5 HP/min & +10 energy/min regen |
 | 50    | Master      | +1 movement speed, +10% XP gain |
-| 75    | Champion    | +3 attack, +3 defense, +5% crit chance |
-| 100   | Legend      | +50 max HP, +50 max energy, +10% sell price, +1 luck |
+| 75    | Champion    | +3 attack, +3 defense, +5% crit chance, +10 HP/min & +20 energy/min regen |
+| 100   | Legend      | +50 max HP, +50 max energy, +10% sell price, +1 luck, +25 HP/min & +40 energy/min regen |
+
+Regen bonuses stack across every unlocked milestone; with the defaults a
+level-100 character refills roughly a full HP/energy bar in about five minutes
+of active play.
 
 ### Milestone presets
 
