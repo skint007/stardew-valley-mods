@@ -54,6 +54,15 @@ that adds a meta **player-level** system on top of the vanilla skills.
 - [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098)
   *(optional, recommended — for the in-game settings UI)*
 
+## Compatibility
+
+Developed and tested on **desktop** (Windows/Linux/macOS). The mod is pure C# logic
+with no platform-specific code and only safe (prefix/postfix) Harmony patches, so it
+*may* work on **Android** via a community SMAPI install — but it's **untested** there,
+so no guarantees. On touch devices the hover tooltips won't show and the settings
+hotkey is keyboard-only (off by default); neither affects gameplay. If you try it on
+Android, a bug report with your SMAPI log is welcome.
+
 ## Installation
 
 1. Install [SMAPI](https://smapi.io/).
