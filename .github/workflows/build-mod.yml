@@ -92,6 +92,10 @@ jobs:
       # Publish the new version to Nexus Mods (only for mods that pass a file group ID, i.e.
       # ones published under your own page). Uses the official Nexus v3 upload API action.
       # NOTE: that API is currently flagged "evaluation only" by Nexus, so treat this as beta.
+      # NOTE: this sets the FILE version only. Nexus's headline "mod version" must still be
+      # bumped by hand on the mod page (the v3 API has no endpoint for it; tracked upstream at
+      # Nexus-Mods/upload-action#11). Keep it in sync: SMAPI's update check reads the headline
+      # version, so users aren't notified of the new file until the mod version matches.
       - name: Publish to Nexus Mods
         if: ${{ steps.check.outputs.should_release == 'true' && inputs.nexus_file_group_id != '' }}
         uses: Nexus-Mods/upload-action@v1.0.0-beta.5
