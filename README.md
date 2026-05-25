@@ -23,3 +23,12 @@ dotnet build
 ```
 
 Build output (`bin/`, `obj/`, `*.dll`, packaged `*.zip`, etc.) is git-ignored.
+
+## Licensing
+
+Licensing is per-mod, not repo-wide:
+
+- **Level Up** — [MIT](levelup/LICENSE).
+- **Better Fertilizer** — a derivative of [Stardew Ultimate Fertilizer](https://github.com/foxwhite25/Stardew-Ultimate-Fertilizer)
+  by fox_white25, published with permission; license to be finalized to match the
+  original author's choice. See [BetterFertilizer/README.md](BetterFertilizer/README.md).
