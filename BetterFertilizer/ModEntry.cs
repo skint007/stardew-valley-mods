@@ -531,22 +531,46 @@ namespace BetterFertilizer {
             }
         }
 
-        /// <summary>Fertilized fruit trees ignore the surrounding-clearance requirement so they grow even when crowded.</summary>
+        /// <summary>True when the player is currently holding a fruit-tree sapling, i.e. these
+        /// clearance checks are running for a placement attempt rather than overnight growth.</summary>
+        private static bool IsPlacingFruitTreeSapling() {
+            return _config.EnableFruitTreeFertilizer
+                   && _config.FruitTreeGrowAnywhere
+                   && Game1.player?.ActiveObject?.IsFruitTreeSapling() == true;
+        }
+
+        /// <summary>
+        /// Fruit trees ignore the surrounding-clearance requirement entirely when "grow anywhere"
+        /// is on. Vanilla calls this both at placement (canBePlacedHere / placementAction) and
+        /// during overnight growth (dayUpdate), so neutralizing it here lets saplings be planted
+        /// in crowded spots *and* keeps them growing there afterwards.
+        /// </summary>
         [HarmonyPatch(typeof(FruitTree), nameof(FruitTree.IsGrowthBlocked))]
         public static class FruitTreeGrowthBlocked {
-            public static bool Prefix(Vector2 tileLocation, GameLocation environment, ref bool __result) {
-                if (!_config.EnableFruitTreeFertilizer || !_config.FruitTreeGrowAnywhere || environment == null) {
+            public static bool Prefix(ref bool __result) {
+                if (!_config.EnableFruitTreeFertilizer || !_config.FruitTreeGrowAnywhere) {
                     return true;
                 }
 
-                if (environment.terrainFeatures.TryGetValue(tileLocation, out var feature)
-                    && feature is FruitTree fruitTree
-                    && FruitTreeSupport.IsFertilized(fruitTree)) {
-                    __result = false;
-                    return false;
+                __result = false; // never blocked by crowding
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Let fruit-tree saplings be planted right next to other trees. Vanilla rejects placement
+        /// within 2 tiles of any tree via IsTooCloseToAnotherTree; bypass it while the player is
+        /// holding a sapling and "grow anywhere" is on.
+        /// </summary>
+        [HarmonyPatch(typeof(FruitTree), nameof(FruitTree.IsTooCloseToAnotherTree))]
+        public static class FruitTreeTooClose {
+            public static bool Prefix(ref bool __result) {
+                if (!IsPlacingFruitTreeSapling()) {
+                    return true;
                 }
 
-                return true;
+                __result = false;
+                return false;
             }
         }
 

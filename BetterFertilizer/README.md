@@ -27,9 +27,12 @@ Everything is configurable in-game via [Generic Mod Config Menu](https://www.nex
 In vanilla, Tree Fertilizer (`(O)805`) only affects wild trees and does nothing on
 fruit trees. With this mod you can apply it to a fruit tree, and:
 
-- **Grow Anywhere** – the fertilized fruit tree ignores the surrounding-clearance
-  rule, so it keeps growing even when crowded by objects, paths, crops or other trees
-  (this mirrors how Tree Fertilizer lets wild trees grow regardless of crowding).
+- **Plant & Grow Anywhere** – fruit trees ignore the surrounding-clearance rule.
+  Saplings can be planted in crowded spots (right next to other trees, objects, paths
+  or crops) instead of being rejected, and they keep growing there afterwards instead
+  of stalling with the "couldn't grow" warning. Applies to all fruit trees while the
+  toggle is on — no fertilizer required. (Normal terrain rules still apply: you can
+  only plant on ground where fruit trees are otherwise allowed.)
 - **Maturity cut on apply** – the moment you fertilize a tree, its remaining
   days-to-mature are cut by a configurable percentage. Default **50%** (a tree with
   14 days left jumps to 7); 100% matures it instantly; 0% disables it.
