@@ -17,6 +17,17 @@ on:
         description: Tag/release prefix for this mod (e.g. levelup -> levelup-v1.0.0).
         required: true
         type: string
+      nexus_file_group_id:
+        description: >-
+          Nexus Mods file group ID to publish new versions to. Leave empty to skip the
+          Nexus upload (e.g. for mods not published under your own page).
+        required: false
+        type: string
+        default: ''
+    secrets:
+      NEXUS_API_KEY:
+        description: Nexus Mods API key. Only needed when nexus_file_group_id is set.
+        required: false
 
 permissions:
   contents: write
@@ -77,3 +88,18 @@ jobs:
           name: ${{ inputs.name }} v${{ steps.meta.outputs.version }}
           files: ${{ steps.pkg.outputs.zip }}
           generate_release_notes: true
+
+      # Publish the new version to Nexus Mods (only for mods that pass a file group ID, i.e.
+      # ones published under your own page). Uses the official Nexus v3 upload API action.
+      # NOTE: that API is currently flagged "evaluation only" by Nexus, so treat this as beta.
+      - name: Publish to Nexus Mods
+        if: ${{ steps.check.outputs.should_release == 'true' && inputs.nexus_file_group_id != '' }}
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.5
+        with:
+          api_key: ${{ secrets.NEXUS_API_KEY }}
+          file_group_id: ${{ inputs.nexus_file_group_id }}
+          filename: ${{ steps.pkg.outputs.zip }}
+          version: ${{ steps.meta.outputs.version }}
+          display_name: ${{ inputs.name }} ${{ steps.meta.outputs.version }}
+          file_category: main
+          archive_existing_file: true

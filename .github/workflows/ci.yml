@@ -57,6 +57,11 @@ jobs:
       name: Level Up
       dir: levelup
       tag_prefix: levelup
+      # Auto-publish new versions to Nexus. Set repo variable LEVELUP_NEXUS_FILE_GROUP_ID
+      # (Files tab -> API Info on the mod page) and secret NEXUS_API_KEY to enable; leave
+      # the variable unset to skip the Nexus upload.
+      nexus_file_group_id: ${{ vars.LEVELUP_NEXUS_FILE_GROUP_ID }}
+    secrets: inherit
 
   betterfertilizer:
     needs: changes
