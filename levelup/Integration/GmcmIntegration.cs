@@ -110,6 +110,12 @@ public class GmcmIntegration
             tooltip: () => T("config.show-xp-bar.tooltip"));
 
         api.AddBoolOption(_manifest,
+            getValue: () => _getConfig().UseVerticalXpBar,
+            setValue: v => _getConfig().UseVerticalXpBar = v,
+            name: () => T("config.vertical-xp-bar.name"),
+            tooltip: () => T("config.vertical-xp-bar.tooltip"));
+
+        api.AddBoolOption(_manifest,
             getValue: () => _getConfig().ShowLevelUpNotification,
             setValue: v => _getConfig().ShowLevelUpNotification = v,
             name: () => T("config.show-notification.name"));

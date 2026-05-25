@@ -12,13 +12,14 @@ using StardewValley.Menus;
 namespace LevelUp.Ui;
 
 /// <summary>
-/// Draws a horizontal XP bar centered above the toolbar at the bottom of the screen:
-/// a small "LVL &lt;n&gt;" box on the left and a long progress-bar box to its right. Both use
-/// the game's standard menu-box frame (so they match any UI recolor) and the assembly is
-/// aligned to the toolbar's 800 px width and anchored just above it.
+/// Draws the XP bar HUD. Two layouts, chosen by <see cref="ModConfig.UseVerticalXpBar"/>:
+///   - Horizontal (default): a "LVL &lt;n&gt;" box plus a progress bar, centered above the toolbar.
+///   - Vertical: a framed bar with an "L" cap to the left of the vanilla HP/Energy bars.
+/// Both use the game's standard sprites so they match any UI recolor.
 /// </summary>
 public class XpBarHud
 {
+    // ── Horizontal layout ─────────────────────────────────────────────────────
     private const int TotalWidth = 800; // matches the vanilla toolbar box width
     private const int BarHeight  = 64;
     private const int BoxGap     = 8;   // gap between the LVL box and the XP box
@@ -26,10 +27,20 @@ public class XpBarHud
     private const int Border     = 16;  // menu-box frame thickness to inset content by
 
     private static readonly Rectangle FrameSource = new(0, 256, 60, 60);
+
+    // ── Vertical layout (matches the vanilla HP/Energy bar metrics) ────────────
+    private const int VBarWidth    = 48;  // 12 px sprite × 4 scale
+    private const int VCapHeight   = 64;
+    private const int VTotalHeight = 224;
+    private const int VRightInset  = 168; // 56 px left of the (potential) health bar at vw - 112
+
+    // ── Shared colors ──────────────────────────────────────────────────────────
     private static readonly Color FillColor      = new(148, 91, 192);
     private static readonly Color FillHighlight  = new(214, 178, 240);
     private static readonly Color TrackShadow    = new(196, 168, 122);
     private static readonly Color LabelColor     = new(132, 78, 196);
+    private static readonly Color LetterColor    = new(206, 168, 240);
+    private static readonly Color LetterShadow   = new(92, 54, 132);
 
     // Floating "+N XP" popup. Rapid gains accumulate into one popup and refresh its timer
     // (reads as a recent-gain total rather than spamming overlapping numbers).
@@ -37,6 +48,10 @@ public class XpBarHud
     private long   _popupAmount;
     private double _popupTimer;
     private float  _popScale = 1f;
+
+    // Cached wood color behind the vertical cap's baked-in letter, read once from the live
+    // Cursors texture so we match whatever recolor the player has. Falls back to a wood brown.
+    private Color? _capPanelColor;
 
     private readonly ModConfig _config;
     private readonly SaveDataManager _saveData;
@@ -93,9 +108,18 @@ public class XpBarHud
         int   level    = _saveData.Current.Level;
         float progress = _calculator.ProgressToNext(totalXp, level);
 
-        // ── Anchor just above the toolbar (when it's at the bottom; otherwise fall back to
-        //    the bottom position so we stay bottom-center even if the toolbar flips up) ────
-        int toolbarTop = vh - 104; // vanilla toolbar box top when docked at the bottom
+        if (_config.UseVerticalXpBar)
+            DrawVertical(sb, vw, vh, level, totalXp, progress);
+        else
+            DrawHorizontal(sb, vw, vh, level, totalXp, progress);
+    }
+
+    // ── Horizontal bar (above the toolbar) ─────────────────────────────────────
+    private void DrawHorizontal(SpriteBatch sb, int vw, int vh, int level, long totalXp, float progress)
+    {
+        // Anchor just above the toolbar (when it's at the bottom; otherwise fall back to the
+        // bottom position so we stay bottom-center even if the toolbar flips up).
+        int toolbarTop = vh - 104;
         foreach (var menu in Game1.onScreenMenus)
         {
             if (menu is Toolbar tb)
@@ -110,14 +134,12 @@ public class XpBarHud
         int barTop    = barBottom - BarHeight;
         int left      = vw / 2 - TotalWidth / 2;
 
-        // ── Layout: LVL box sized to its text, XP box takes the rest ─────────────────────
         string label   = _i18n.Get("hud.level-label", new { level });
         int    labelW  = SpriteText.getWidthOfString(label);
         int    lvlBoxW = Math.Max(140, labelW + 2 * Border + 16);
         int    xpBoxX  = left + lvlBoxW + BoxGap;
         int    xpBoxW  = TotalWidth - lvlBoxW - BoxGap;
 
-        // ── LVL box ──────────────────────────────────────────────────────────────────────
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             left, barTop, lvlBoxW, BarHeight, Color.White, scale: 1f, drawShadow: false);
 
@@ -128,7 +150,6 @@ public class XpBarHud
         int labelY = barTop + (BarHeight - labelH) / 2 + 6;
         SpriteText.drawString(sb, label, labelX, labelY, color: LabelColor);
 
-        // ── XP box ───────────────────────────────────────────────────────────────────────
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             xpBoxX, barTop, xpBoxW, BarHeight, Color.White, scale: 1f, drawShadow: false);
 
@@ -137,11 +158,9 @@ public class XpBarHud
         int trackW = xpBoxW  - 2 * Border;
         int trackH = BarHeight - 2 * Border;
 
-        // Recessed inner shadow on the empty track (top + left), like the vanilla bars.
         sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, trackW, 3), TrackShadow);
         sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, 3, trackH), TrackShadow);
 
-        // Purple fill, growing left → right.
         int fillW = (int)Math.Round(trackW * progress);
         if (fillW > 0)
         {
@@ -149,57 +168,163 @@ public class XpBarHud
             sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, fillW, 4), FillHighlight);
         }
 
-        // ── Floating "+N XP" popup above the XP box ──────────────────────────────────────
-        if (_popupTimer > 0)
+        DrawPopup(sb, xpBoxX + xpBoxW / 2f, barTop);
+        SetHoverTip(new Rectangle(left, barTop, TotalWidth, BarHeight), level, totalXp);
+    }
+
+    // ── Vertical bar (left of the HP/Energy bars) ──────────────────────────────
+    private void DrawVertical(SpriteBatch sb, int vw, int vh, int level, long totalXp, float progress)
+    {
+        var cursors = Game1.mouseCursors;
+
+        int barBottomY = vh - 16;
+        int barTopY    = barBottomY - VTotalHeight;
+        int barX       = vw - VRightInset;
+
+        // Top wood cap with a recessed "L" plate.
+        DrawLevelCap(sb, cursors, barX, barTopY);
+
+        // Parchment middle, tile-stretched between the caps.
+        int middleY = barTopY + VCapHeight;
+        int middleH = (barBottomY - VCapHeight) - middleY;
+        sb.Draw(cursors, new Rectangle(barX, middleY, VBarWidth, middleH),
+            new Rectangle(256, 424, 12, 16), Color.White);
+
+        // Bottom wood cap.
+        sb.Draw(cursors, new Vector2(barX, barBottomY - VCapHeight),
+            new Rectangle(256, 448, 12, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+
+        // Purple fill rising from the bottom inside the parchment (geometry matches vanilla:
+        // 24 px wide, inset 12 px; from 48 px below the top down to 8 px above the bottom).
+        int fillX       = barX + 12;
+        int fillW       = 24;
+        int fillAreaTop = barTopY    + 48;
+        int fillAreaBot = barBottomY - 8;
+        int fillH       = (int)Math.Round((fillAreaBot - fillAreaTop) * progress);
+        if (fillH > 0)
         {
-            double dt = Game1.currentGameTime?.ElapsedGameTime.TotalMilliseconds ?? 16.0;
-            _popupTimer -= dt;
-            _popScale += (1f - _popScale) * 0.18f; // ease the pop back to 1.0
-            if (_popupTimer <= 0)
-            {
-                _popupTimer = 0;
-                _popupAmount = 0;
-                _popScale = 1f;
-            }
-            else
-            {
-                float t     = (float)(_popupTimer / PopupDurationMs);
-                float rise  = (1f - t) * 38f;
-                float alpha = t > 0.30f ? 1f : t / 0.30f;
-
-                string txt    = _i18n.Get("hud.xp-popup", new { amount = _popupAmount.ToString("N0") });
-                var    font   = Game1.smallFont;
-                Vector2 size   = font.MeasureString(txt);
-                Vector2 origin = size / 2f;
-                var pos = new Vector2(xpBoxX + xpBoxW / 2f, barTop - 8 - rise);
-
-                sb.DrawString(font, txt, pos + new Vector2(2f, 2f),
-                    new Color(0, 0, 0) * (0.55f * alpha), 0f, origin, _popScale,
-                    SpriteEffects.None, 1f);
-                sb.DrawString(font, txt, pos,
-                    FillHighlight * alpha, 0f, origin, _popScale,
-                    SpriteEffects.None, 1f);
-            }
+            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, fillH), FillColor);
+            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, 4), FillHighlight);
         }
 
-        // ── Hover tooltip: detected here, but drawn later in DrawTooltip() so it sits on
-        //    top of the toolbar rather than behind it ──────────────────────────────────────
-        var mouse = Game1.getMousePosition();
-        var hitRect = new Rectangle(left, barTop, TotalWidth, BarHeight);
-        if (hitRect.Contains(mouse))
+        DrawPopup(sb, barX + VBarWidth / 2f, barTopY);
+        SetHoverTip(new Rectangle(barX, barTopY, VBarWidth, VTotalHeight), level, totalXp);
+    }
+
+    /// <summary>
+    /// Draw the vertical bar's top cap: the real wood-frame sprite, a recessed wood plate
+    /// covering the sprite's baked-in letter, and a chunky pixel-art "L" on a 4 px grid.
+    /// </summary>
+    private void DrawLevelCap(SpriteBatch sb, Texture2D cursors, int barX, int barTopY)
+    {
+        sb.Draw(cursors, new Vector2(barX, barTopY),
+            new Rectangle(256, 408, 12, 16),
+            Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+
+        Color panel = GetCapPanelColor(cursors);
+        int plateX = barX + 8, plateY = barTopY + 8, plateW = 32, plateH = 40;
+        sb.Draw(Game1.staminaRect, new Rectangle(plateX, plateY, plateW, plateH), panel);
+
+        const int u = 4; // grid unit = one source pixel at 4× scale
+        int boxW = 5 * u, boxH = 7 * u;
+        int lx = plateX + (plateW - boxW) / 2;
+        int ly = plateY + (plateH - boxH) / 2 - 2;
+
+        void Cell(int gx, int gy, int gw, int gh, Color c) =>
+            sb.Draw(Game1.staminaRect, new Rectangle(lx + gx * u, ly + gy * u, gw * u, gh * u), c);
+
+        Cell(1, 1, 2, 7, LetterShadow); // vertical stroke shadow
+        Cell(1, 6, 5, 2, LetterShadow); // foot shadow
+        Cell(0, 0, 2, 7, LetterColor);  // vertical stroke
+        Cell(0, 5, 5, 2, LetterColor);  // foot
+    }
+
+    /// <summary>
+    /// Read (once, cached) the dominant wood color behind the cap sprite's baked-in letter so
+    /// our blank panel blends with the surrounding wood. Falls back to a wood brown.
+    /// </summary>
+    private Color GetCapPanelColor(Texture2D cursors)
+    {
+        if (_capPanelColor.HasValue) return _capPanelColor.Value;
+
+        Color result = new(120, 70, 34);
+        try
         {
-            long needed = _calculator.XpToNextLevel(level);
-            long into   = _calculator.XpIntoCurrentLevel(totalXp, level);
-            _hoverTip = level >= _calculator.LevelCap
-                ? _i18n.Get("hud.tooltip.max", new { level, total = totalXp.ToString("N0") })
-                : _i18n.Get("hud.tooltip.progress", new
+            var buf = new Color[12 * 16];
+            cursors.GetData(0, new Rectangle(256, 408, 12, 16), buf, 0, buf.Length);
+
+            var counts = new System.Collections.Generic.Dictionary<Color, int>();
+            for (int y = 1; y <= 14; y++)
+                for (int x = 1; x <= 10; x++)
                 {
-                    level,
-                    into = into.ToString("N0"),
-                    needed = needed.ToString("N0"),
-                    total = totalXp.ToString("N0"),
-                });
+                    Color c = buf[y * 12 + x];
+                    if (c.A < 200) continue;
+                    counts.TryGetValue(c, out int n);
+                    counts[c] = n + 1;
+                }
+
+            int best = 0;
+            foreach (var kv in counts)
+                if (kv.Value > best) { best = kv.Value; result = kv.Key; }
         }
+        catch
+        {
+            // keep the fallback
+        }
+
+        _capPanelColor = result;
+        return result;
+    }
+
+    // ── Shared popup + hover ────────────────────────────────────────────────────
+    private void DrawPopup(SpriteBatch sb, float centerX, float topY)
+    {
+        if (_popupTimer <= 0) return;
+
+        double dt = Game1.currentGameTime?.ElapsedGameTime.TotalMilliseconds ?? 16.0;
+        _popupTimer -= dt;
+        _popScale += (1f - _popScale) * 0.18f; // ease the pop back to 1.0
+        if (_popupTimer <= 0)
+        {
+            _popupTimer = 0;
+            _popupAmount = 0;
+            _popScale = 1f;
+            return;
+        }
+
+        float t     = (float)(_popupTimer / PopupDurationMs);
+        float rise  = (1f - t) * 38f;
+        float alpha = t > 0.30f ? 1f : t / 0.30f;
+
+        string txt    = _i18n.Get("hud.xp-popup", new { amount = _popupAmount.ToString("N0") });
+        var    font   = Game1.smallFont;
+        Vector2 size   = font.MeasureString(txt);
+        Vector2 origin = size / 2f;
+        var pos = new Vector2(centerX, topY - 8 - rise);
+
+        sb.DrawString(font, txt, pos + new Vector2(2f, 2f),
+            new Color(0, 0, 0) * (0.55f * alpha), 0f, origin, _popScale,
+            SpriteEffects.None, 1f);
+        sb.DrawString(font, txt, pos,
+            FillHighlight * alpha, 0f, origin, _popScale,
+            SpriteEffects.None, 1f);
+    }
+
+    private void SetHoverTip(Rectangle hitRect, int level, long totalXp)
+    {
+        if (!hitRect.Contains(Game1.getMousePosition())) return;
+
+        long needed = _calculator.XpToNextLevel(level);
+        long into   = _calculator.XpIntoCurrentLevel(totalXp, level);
+        _hoverTip = level >= _calculator.LevelCap
+            ? _i18n.Get("hud.tooltip.max", new { level, total = totalXp.ToString("N0") })
+            : _i18n.Get("hud.tooltip.progress", new
+            {
+                level,
+                into = into.ToString("N0"),
+                needed = needed.ToString("N0"),
+                total = totalXp.ToString("N0"),
+            });
     }
 
     /// <summary>

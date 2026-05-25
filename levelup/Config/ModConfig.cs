@@ -18,8 +18,14 @@ public class ModConfig
 
     // ── HUD / feedback ──────────────────────────────────────────────────────
 
-    /// <summary>Show the XP bar next to vanilla HP/Energy bars.</summary>
+    /// <summary>Show the XP bar HUD element.</summary>
     public bool ShowXpBar { get; set; } = true;
+
+    /// <summary>
+    /// When true, draw the original vertical XP bar to the left of the vanilla HP/Energy bars
+    /// instead of the horizontal bar above the toolbar.
+    /// </summary>
+    public bool UseVerticalXpBar { get; set; } = false;
 
     /// <summary>Show a HUD message when the player levels up.</summary>
     public bool ShowLevelUpNotification { get; set; } = true;

@@ -35,6 +35,12 @@ the entry you add below.
   and the GMCM menu reflects in-game language changes without a restart. Preset
   dropdown values keep stable English keys, so existing `config.json` files are
   unaffected.
+- **Choice of XP bar layout.** The XP bar is now a horizontal "LVL &lt;n&gt;" plate
+  plus progress bar centered above the toolbar; a new **Use vertical XP bar** toggle
+  brings back the original vertical bar beside the HP/Energy bars.
+- **Passive HP/energy regen** as a milestone bonus, ticking while time passes (paused
+  in menus, events, and sleep).
+- **Configurable hotkey** to open the mod's settings menu directly.
 
 ### Changed
 
@@ -45,6 +51,9 @@ the entry you add below.
   bonuses apply for everyone.
 - Removed the `Context.IsMainPlayer` gates so farmhands earn XP too; monster-kill
   XP is now credited only on the killer's machine to prevent double-counting.
+- Redesigned the XP bar into the horizontal above-toolbar layout by default (use the
+  new toggle to keep the original vertical bar). The cursor tooltips that replaced the
+  vanilla HP/Energy hover numbers were removed, since the bar no longer overlaps them.
 
 ## [1.0.0] - 2026-05-15
 
