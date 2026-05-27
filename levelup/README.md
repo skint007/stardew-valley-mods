@@ -140,7 +140,7 @@ Other presets: **Casual** (200, 1.06 — faster, ~1.06M to 100), **Hardcore**
 | Festival          | 75                          | off     |
 | New area          | 25                          | off     |
 | Skill level-up    | 150 per level               | on      |
-| Skill XP (tasks)  | 10% of vanilla skill XP     | on      |
+| Skill XP (tasks)  | 100% of vanilla skill XP    | on      |
 
 ## Translations
 

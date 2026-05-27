@@ -34,7 +34,9 @@ the entry you add below.
   progression evenly across 1–100 (Standard's total drops from an effectively
   unreachable ~681M to ~6.4M), and monster XP is toned down (per-HP 1 → 0.25, boss
   multiplier 5 → 2). Presets: Casual `(200, 1.06)`, Standard `(250, 1.08)`,
-  Hardcore `(300, 1.10)`.
+  Hardcore `(300, 1.10)`. The "Scale with skill XP" rate default is raised 0.1 → 1.0
+  (100%): the award is floored, so at 0.1 any task granting under 10 skill XP rounded
+  away to nothing, making most small tasks feel like they did nothing.
   - **Existing saves:** player level is derived from lifetime XP, so it is
     recalculated under the new curve on load. Most characters will jump *up* a few
     levels (the old curve was far harsher); milestone bonuses simply reapply. The

@@ -66,6 +66,10 @@ public class XpSourcesConfig
     /// </summary>
     public bool SkillXpEnabled { get; set; } = true;
 
-    /// <summary>Fraction of earned skill XP converted to meta XP (0.1 = 10%).</summary>
-    public float SkillXpRate { get; set; } = 0.1f;
+    /// <summary>
+    /// Fraction of earned skill XP converted to meta XP (1.0 = 100%). Kept at 1.0 so small
+    /// tasks still register: the award is floored, so at low rates anything under 1/rate skill
+    /// XP rounds away to nothing (at 0.1, any task under 10 XP gave zero).
+    /// </summary>
+    public float SkillXpRate { get; set; } = 1.0f;
 }

@@ -64,7 +64,7 @@
   "xp.skill-xp.name": "Scale with skill XP",
   "xp.skill-xp.tooltip": "Earn meta XP as a fraction of all vanilla skill XP (farming, fishing, chopping, mining, foraging, combat).",
   "xp.skill-xp-rate.name": "Skill XP rate",
-  "xp.skill-xp-rate.tooltip": "Fraction of earned skill XP converted to meta XP. 0.10 = 10%.",
+  "xp.skill-xp-rate.tooltip": "Fraction of earned skill XP converted to meta XP. 1.0 = 100%, 0.5 = 50%.",
 
   "curve.paragraph": "XP needed per level grows as: base × growth^(level-1)",
   "curve.preset.name": "Preset",
