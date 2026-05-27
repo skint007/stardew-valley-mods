@@ -24,6 +24,8 @@
   "config.show-xp-bar.tooltip": "Display the XP bar HUD element.",
   "config.vertical-xp-bar.name": "Use vertical XP bar",
   "config.vertical-xp-bar.tooltip": "Draw the original vertical bar to the left of the HP/Energy bars instead of the horizontal bar above the toolbar.",
+  "config.fade-vertical-bar.name": "Fade vertical bar when idle",
+  "config.fade-vertical-bar.tooltip": "When using the vertical bar, fade it to a faint ghost after a while without XP gains (like the vanilla HP/Energy bars). Hovering it brings it back. No effect on the horizontal bar.",
   "config.show-notification.name": "Show level-up notification",
   "config.play-sound.name": "Play level-up sound",
   "config.debug-logging.name": "Debug logging",

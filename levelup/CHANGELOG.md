@@ -19,6 +19,11 @@ the entry you add below.
 - **Update notifications.** Added the Nexus update key (`Nexus:46651`) to the
   manifest so SMAPI tells players when a newer version is available. Takes effect
   for anyone running this version or later.
+- **Idle fade for the vertical XP bar.** When the vertical bar layout is in use, it
+  now fades to a faint ghost after a few seconds without XP gains (like the vanilla
+  HP/Energy bars) and brightens back on the next gain or when you hover it. Toggle
+  with the new "Fade vertical bar when idle" option (on by default); the horizontal
+  bar is unaffected.
 
 ### Changed
 

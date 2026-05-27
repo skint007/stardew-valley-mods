@@ -49,6 +49,15 @@ public class XpBarHud
     private double _popupTimer;
     private float  _popScale = 1f;
 
+    // Idle fade for the vertical bar (mirrors how the vanilla HP/energy bars fade when idle):
+    // hold full opacity for a grace period after the last XP gain, then ease down to a faint
+    // ghost. Hovering the bar forces it solid. Only the vertical layout fades; the horizontal
+    // above-toolbar bar is a different context.
+    private const double IdleFadeDelayMs    = 4000;  // stay solid this long after a gain / hover
+    private const double IdleFadeDurationMs = 1200;  // then ease to IdleMinAlpha over this long
+    private const float  IdleMinAlpha       = 0.2f;  // resting opacity once fully faded
+    private double _idleMs = IdleFadeDelayMs + IdleFadeDurationMs; // start faded until first gain/hover
+
     // Cached wood color behind the vertical cap's baked-in letter, read once from the live
     // Cursors texture so we match whatever recolor the player has. Falls back to a wood brown.
     private Color? _capPanelColor;
@@ -84,6 +93,7 @@ public class XpBarHud
         _popupAmount += amount;
         _popupTimer = PopupDurationMs;
         _popScale = 1.35f; // brief pop, eased back toward 1.0 each frame
+        _idleMs = 0;       // a gain wakes the bar back to full opacity
     }
 
     /// <summary>
@@ -181,18 +191,22 @@ public class XpBarHud
         int barTopY    = barBottomY - VTotalHeight;
         int barX       = vw - VRightInset;
 
+        var hitRect = new Rectangle(barX, barTopY, VBarWidth, VTotalHeight);
+        bool hovered = hitRect.Contains(Game1.getMousePosition());
+        float a = ComputeIdleAlpha(hovered);
+
         // Top wood cap with a recessed "L" plate.
-        DrawLevelCap(sb, cursors, barX, barTopY);
+        DrawLevelCap(sb, cursors, barX, barTopY, a);
 
         // Parchment middle, tile-stretched between the caps.
         int middleY = barTopY + VCapHeight;
         int middleH = (barBottomY - VCapHeight) - middleY;
         sb.Draw(cursors, new Rectangle(barX, middleY, VBarWidth, middleH),
-            new Rectangle(256, 424, 12, 16), Color.White);
+            new Rectangle(256, 424, 12, 16), Color.White * a);
 
         // Bottom wood cap.
         sb.Draw(cursors, new Vector2(barX, barBottomY - VCapHeight),
-            new Rectangle(256, 448, 12, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+            new Rectangle(256, 448, 12, 16), Color.White * a, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
 
         // Purple fill rising from the bottom inside the parchment (geometry matches vanilla:
         // 24 px wide, inset 12 px; from 48 px below the top down to 8 px above the bottom).
@@ -203,27 +217,50 @@ public class XpBarHud
         int fillH       = (int)Math.Round((fillAreaBot - fillAreaTop) * progress);
         if (fillH > 0)
         {
-            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, fillH), FillColor);
-            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, 4), FillHighlight);
+            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, fillH), FillColor * a);
+            sb.Draw(Game1.staminaRect, new Rectangle(fillX, fillAreaBot - fillH, fillW, 4), FillHighlight * a);
         }
 
         DrawPopup(sb, barX + VBarWidth / 2f, barTopY);
-        SetHoverTip(new Rectangle(barX, barTopY, VBarWidth, VTotalHeight), level, totalXp);
+        SetHoverTip(hitRect, level, totalXp);
+    }
+
+    /// <summary>
+    /// Opacity for the idle-fading vertical bar. Returns 1.0 while recently active or hovered,
+    /// then eases down to <see cref="IdleMinAlpha"/> after <see cref="IdleFadeDelayMs"/> of no
+    /// gains. Returns 1.0 unconditionally when the fade is disabled in config.
+    /// </summary>
+    private float ComputeIdleAlpha(bool hovered)
+    {
+        if (!_config.FadeVerticalBarWhenIdle) return 1f;
+
+        if (hovered)
+        {
+            _idleMs = 0; // pointing at the bar keeps it solid (and discoverable)
+            return 1f;
+        }
+
+        _idleMs += Game1.currentGameTime?.ElapsedGameTime.TotalMilliseconds ?? 16.0;
+        if (_idleMs <= IdleFadeDelayMs) return 1f;
+
+        double into = _idleMs - IdleFadeDelayMs;
+        if (into >= IdleFadeDurationMs) return IdleMinAlpha;
+        return MathHelper.Lerp(1f, IdleMinAlpha, (float)(into / IdleFadeDurationMs));
     }
 
     /// <summary>
     /// Draw the vertical bar's top cap: the real wood-frame sprite, a recessed wood plate
     /// covering the sprite's baked-in letter, and a chunky pixel-art "L" on a 4 px grid.
     /// </summary>
-    private void DrawLevelCap(SpriteBatch sb, Texture2D cursors, int barX, int barTopY)
+    private void DrawLevelCap(SpriteBatch sb, Texture2D cursors, int barX, int barTopY, float a)
     {
         sb.Draw(cursors, new Vector2(barX, barTopY),
             new Rectangle(256, 408, 12, 16),
-            Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+            Color.White * a, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
 
         Color panel = GetCapPanelColor(cursors);
         int plateX = barX + 8, plateY = barTopY + 8, plateW = 32, plateH = 40;
-        sb.Draw(Game1.staminaRect, new Rectangle(plateX, plateY, plateW, plateH), panel);
+        sb.Draw(Game1.staminaRect, new Rectangle(plateX, plateY, plateW, plateH), panel * a);
 
         const int u = 4; // grid unit = one source pixel at 4× scale
         int boxW = 5 * u, boxH = 7 * u;
@@ -231,7 +268,7 @@ public class XpBarHud
         int ly = plateY + (plateH - boxH) / 2 - 2;
 
         void Cell(int gx, int gy, int gw, int gh, Color c) =>
-            sb.Draw(Game1.staminaRect, new Rectangle(lx + gx * u, ly + gy * u, gw * u, gh * u), c);
+            sb.Draw(Game1.staminaRect, new Rectangle(lx + gx * u, ly + gy * u, gw * u, gh * u), c * a);
 
         Cell(1, 1, 2, 7, LetterShadow); // vertical stroke shadow
         Cell(1, 6, 5, 2, LetterShadow); // foot shadow

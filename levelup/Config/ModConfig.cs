@@ -27,6 +27,12 @@ public class ModConfig
     /// </summary>
     public bool UseVerticalXpBar { get; set; } = false;
 
+    /// <summary>
+    /// When true (and the vertical bar is in use), the vertical bar fades to a faint ghost
+    /// after a while without XP gains, like the vanilla HP/Energy bars. Hovering it restores it.
+    /// </summary>
+    public bool FadeVerticalBarWhenIdle { get; set; } = true;
+
     /// <summary>Show a HUD message when the player levels up.</summary>
     public bool ShowLevelUpNotification { get; set; } = true;
 
