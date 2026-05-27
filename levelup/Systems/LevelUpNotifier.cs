@@ -55,6 +55,6 @@ public class LevelUpNotifier
         }
 
         if (_config.DebugLogging)
-            _monitor.Log($"Level-up: {oldLevel} → {newLevel}" + (crossed != null ? $" ({crossed.Name})" : ""), LogLevel.Trace);
+            _monitor.Log($"Level-up: {oldLevel} → {newLevel}" + (crossed != null ? $" ({crossed.Name})" : ""), LogLevel.Debug);
     }
 }

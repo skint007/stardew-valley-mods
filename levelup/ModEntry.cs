@@ -101,7 +101,17 @@ public class ModEntry : Mod
                 _config.ApplyMilestonePreset = Config.MilestonePresets.KeepCurrent;
 
                 Helper.WriteConfig(_config);
-                _calculator = new LevelCalculator(_config.Curve, _config.LevelCap);
+
+                // Reconfigure the shared calculator in place (not a new instance) so XpTracker,
+                // the HUD, and console commands all pick up the new curve/cap instead of holding
+                // a stale one.
+                _calculator.Reconfigure(_config.Curve, _config.LevelCap);
+
+                // Re-derive level from lifetime XP under the (possibly changed) curve/cap right
+                // away, so it's consistent immediately instead of lurching on the next XP gain.
+                if (Context.IsWorldReady)
+                    _saveData.Current.Level = _calculator.LevelForTotalXp(_saveData.Current.TotalXp);
+
                 _bonusApplier.ApplyAll();
             });
         _gmcm.Register();

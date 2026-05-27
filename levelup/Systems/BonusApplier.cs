@@ -134,7 +134,7 @@ public class BonusApplier
                 $"+{bonus.Attack} atk, +{bonus.Defense} def, +{bonus.CritChance:P0} crit, " +
                 $"+{bonus.WeaponSpeed:P0} wspd, +{bonus.MovementSpeed} mspd, +{bonus.MagneticRadius} mag, " +
                 $"+{bonus.Luck} luck, +{bonus.XpMultiplier:P0} xp, +{bonus.SellPriceBonus:P0} sell",
-                LogLevel.Trace);
+                LogLevel.Debug);
         }
     }
 

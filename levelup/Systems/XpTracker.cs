@@ -47,7 +47,7 @@ public class XpTracker
         int newLevel = _calculator.LevelForTotalXp(_saveData.Current.TotalXp);
 
         if (_config.DebugLogging)
-            _monitor.Log($"+{amount} XP from {source} (total {_saveData.Current.TotalXp})", LogLevel.Trace);
+            _monitor.Log($"+{amount} XP from {source} (total {_saveData.Current.TotalXp})", LogLevel.Debug);
 
         XpAwarded?.Invoke(amount, source);
 

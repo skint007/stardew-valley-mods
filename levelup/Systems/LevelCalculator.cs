@@ -14,8 +14,8 @@ namespace LevelUp.Systems;
 /// </summary>
 public class LevelCalculator
 {
-    private readonly CurveConfig _curve;
-    private readonly int _levelCap;
+    private CurveConfig _curve;
+    private int _levelCap;
 
     // Cached cumulative XP thresholds: _cumulativeXp[L] = total XP required to reach level L.
     // _cumulativeXp[1] = 0, _cumulativeXp[2] = xpToNext(1), etc.
@@ -26,6 +26,18 @@ public class LevelCalculator
         _curve = curve;
         _levelCap = Math.Max(1, levelCap);
         _cumulativeXp = Array.Empty<long>();
+        Rebuild();
+    }
+
+    /// <summary>
+    /// Re-point at a (possibly new) curve + level cap and rebuild the table in place. Use this
+    /// rather than constructing a new instance so existing holders (XpTracker, the HUD, console
+    /// commands) keep working against the same object instead of a stale one.
+    /// </summary>
+    public void Reconfigure(CurveConfig curve, int levelCap)
+    {
+        _curve = curve;
+        _levelCap = Math.Max(1, levelCap);
         Rebuild();
     }
 

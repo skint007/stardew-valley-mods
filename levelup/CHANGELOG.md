@@ -50,6 +50,14 @@ the entry you add below.
 
 ### Fixed
 
+- **Changing curve/level-cap settings now takes effect immediately.** Saving config
+  changes rebuilt the level calculator into a new object that the XP tracker and HUD
+  never picked up, and the player's level wasn't recomputed, so a changed curve only
+  "applied" on the next XP gain — surfacing as a sudden level jump mid-activity. The
+  calculator is now reconfigured in place and the level is re-derived on save.
+- **Debug logging now appears in the SMAPI console.** It was logged at `Trace`, which
+  SMAPI writes only to the log file; it now logs at `Debug` so enabling the option
+  actually shows the per-source XP breakdown in the console.
 - **XP curve overflow that threw players to absurd levels.** A steep growth rate
   or a high level cap could make a per-level XP cost exceed what the threshold
   table can store, wrapping it negative and corrupting the level lookup (reports
