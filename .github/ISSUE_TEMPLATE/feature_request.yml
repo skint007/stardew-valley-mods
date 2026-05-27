@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest a new feature or change for one of the mods.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got an idea? Great. Tell me what you'd like and, just as importantly, *why* —
+        the use case is what makes a request easy to design around.
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod?
+      options:
+        - Level Up
+        - Better Fertilizer
+        - A new mod / not specific
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: What would you like?
+      description: Describe the feature or change.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: What's the use case?
+      description: What are you trying to do, and how would this help? Concrete examples welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds
+      description: Anything you've tried, or other mods that do something similar. Optional.
+    validations:
+      required: false

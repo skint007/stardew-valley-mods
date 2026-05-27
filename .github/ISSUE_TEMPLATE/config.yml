@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Level Up — Nexus Mods page
+    url: https://www.nexusmods.com/stardewvalley/mods/46651?tab=posts
+    about: Prefer not to use GitHub? Post in the Level Up forum on Nexus and I'll mirror actionable reports into an issue here.

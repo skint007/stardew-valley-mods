@@ -1,0 +1,67 @@
+name: Bug report
+description: Something in one of the mods isn't working as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! A SMAPI log link is the single
+        most useful thing you can include — most issues are diagnosed straight from it.
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod?
+      options:
+        - Level Up
+        - Better Fertilizer
+        - Not sure / multiple
+    validations:
+      required: true
+  - type: input
+    id: mod-version
+    attributes:
+      label: Mod version
+      description: From the mod's page, or `manifest.json` in the mod folder.
+      placeholder: e.g. 1.1.1
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What went wrong, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Do ...
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: smapi-log
+    attributes:
+      label: SMAPI log
+      description: "Upload your log at https://smapi.io/log and paste the link here."
+      placeholder: https://smapi.io/log/...
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: SMAPI version, Stardew Valley version, OS, and single-player vs. multiplayer.
+      placeholder: e.g. SMAPI 4.1.0, SDV 1.6.15, Linux, multiplayer (farmhand)
+    validations:
+      required: false
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other mods installed
+      description: Especially anything that touches the same systems (combat, farming, HUD, GMCM). Optional but helps rule out conflicts.
+    validations:
+      required: false
