@@ -10,11 +10,11 @@ public class XpSourcesConfig
     /// <summary>Award XP for killing monsters.</summary>
     public bool MonsterKillEnabled { get; set; } = true;
 
-    /// <summary>XP per point of monster max-HP (1 = a 50-HP monster gives 50 XP).</summary>
-    public float MonsterXpPerMaxHp { get; set; } = 1f;
+    /// <summary>XP per point of monster max-HP (0.5 = a 50-HP monster gives 25 XP).</summary>
+    public float MonsterXpPerMaxHp { get; set; } = 0.5f;
 
     /// <summary>Multiplier applied on top when the monster is a boss / mine-floor boss.</summary>
-    public float BossKillMultiplier { get; set; } = 5f;
+    public float BossKillMultiplier { get; set; } = 3f;
 
     // ── Days survived ───────────────────────────────────────────────────────
 

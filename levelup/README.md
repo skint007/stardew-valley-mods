@@ -113,25 +113,27 @@ editable afterward and the selector reverts to *(keep current)*.
 ### XP curve
 
 `xpToNextLevel(N) = floor(base × growth^(N-1))`. The **Standard** preset is
-`base = 100, growth = 1.15`:
+`base = 250, growth = 1.08`. The curve uses a high base and a gentle growth on
+purpose: a steep growth makes early levels trivially cheap and late levels an
+unreachable wall, so the rate is flattened to spread progression across 1–100.
 
 | Level → next | XP to next | Cumulative |
 | ------------ | ---------- | ---------- |
-| 1 → 2        | 100        | 100        |
-| 5 → 6        | 175        | ~675       |
-| 10 → 11      | 351        | ~1,933     |
-| 25 → 26      | 2,851      | ~25,000    |
-| 50 → 51      | 96,890     | ~750,000   |
-| 100 → 101    | 1.17M      | ~10M       |
+| 1 → 2        | 250        | 250        |
+| 5 → 6        | 340        | ~1,470     |
+| 10 → 11      | 500        | ~3,620     |
+| 25 → 26      | 1,585      | ~18,300    |
+| 50 → 51      | 10,856     | ~143,000   |
+| 99 → 100     | 471,485    | ~6.36M     |
 
-Other presets: **Casual** (75, 1.12 — faster), **Hardcore** (150, 1.20 — much
-slower), **Custom** (your own base + growth).
+Other presets: **Casual** (200, 1.06 — faster, ~1.06M to 100), **Hardcore**
+(300, 1.10 — slower, ~37.6M to 100), **Custom** (your own base + growth).
 
 ### XP sources (default rates)
 
 | Source            | Default XP                  | Default |
 | ----------------- | --------------------------- | ------- |
-| Monster kill      | 1 × max HP (× 5 for bosses) | on      |
+| Monster kill      | 0.5 × max HP (× 3 for bosses) | on      |
 | Day survived      | 50                          | on      |
 | Story quest       | 100                         | on      |
 | Help Wanted quest | 25                          | on      |
