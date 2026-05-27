@@ -31,6 +31,15 @@ public class LevelCalculator
 
     /// <summary>
     /// Recompute the cached threshold table. Call when curve params or level cap change.
+    ///
+    /// The per-level cost grows exponentially as a <see cref="double"/>. With a steep growth
+    /// rate or a high level cap it can exceed <see cref="long.MaxValue"/>; an unchecked
+    /// double→long cast would then wrap to a large negative value, break the table's
+    /// monotonicity, and send <see cref="LevelForTotalXp"/> to an absurd level. We instead
+    /// <em>saturate</em>: once a step would overflow, every remaining threshold is pinned to
+    /// <see cref="long.MaxValue"/>. That keeps the table non-decreasing (so the binary search
+    /// stays correct) and simply makes those upper levels unreachable, since real lifetime XP
+    /// can never reach long.MaxValue.
     /// </summary>
     public void Rebuild()
     {
@@ -40,11 +49,27 @@ public class LevelCalculator
 
         double current = baseXp;
         long running = 0;
+        bool saturated = false;
         for (int level = 2; level <= _levelCap; level++)
         {
-            running += (long)Math.Floor(current);
-            _cumulativeXp[level] = running;
-            current *= growth;
+            if (!saturated)
+            {
+                double step = Math.Floor(current);
+                // Saturate if the step itself overflows long, or if adding it to the running
+                // total would. The (long)step cast is only reached when step < long.MaxValue
+                // (|| short-circuits), so it can't overflow.
+                if (step >= long.MaxValue || running > long.MaxValue - (long)step)
+                {
+                    saturated = true;
+                }
+                else
+                {
+                    running += (long)step;
+                    current *= growth;
+                }
+            }
+
+            _cumulativeXp[level] = saturated ? long.MaxValue : running;
         }
     }
 

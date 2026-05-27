@@ -20,6 +20,16 @@ the entry you add below.
   manifest so SMAPI tells players when a newer version is available. Takes effect
   for anyone running this version or later.
 
+### Fixed
+
+- **XP curve overflow that threw players to absurd levels.** A steep growth rate
+  or a high level cap could make a per-level XP cost exceed what the threshold
+  table can store, wrapping it negative and corrupting the level lookup (reports
+  of jumping to level 314 / 800, often the instant a new save earned any XP). The
+  curve now saturates safely instead of overflowing, so the table stays valid and
+  those extreme upper levels simply become unreachable. Default settings are
+  unaffected.
+
 ## [1.1.1] - 2026-05-25
 
 Maintenance release: brings the 1.1 feature set to Nexus Mods (1.1.0 was published
