@@ -14,6 +14,12 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Added
+
+- **Update notifications.** Added the Nexus update key (`Nexus:46651`) to the
+  manifest so SMAPI tells players when a newer version is available. Takes effect
+  for anyone running this version or later.
+
 ## [1.1.1] - 2026-05-25
 
 Maintenance release: brings the 1.1 feature set to Nexus Mods (1.1.0 was published
