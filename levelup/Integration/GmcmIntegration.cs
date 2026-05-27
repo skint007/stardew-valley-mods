@@ -202,7 +202,7 @@ public class GmcmIntegration
             getValue: () => _getConfig().XpSources.DaySurvivedXp,
             setValue: v => _getConfig().XpSources.DaySurvivedXp = v,
             name: () => T("xp.day-xp.name"),
-            min: 0, max: 10000, interval: 5);
+            min: 0, max: 2000, interval: 5);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.DaySurvivedSkipOnPassout,
             setValue: v => _getConfig().XpSources.DaySurvivedSkipOnPassout = v,
@@ -217,12 +217,12 @@ public class GmcmIntegration
             getValue: () => _getConfig().XpSources.StoryQuestXp,
             setValue: v => _getConfig().XpSources.StoryQuestXp = v,
             name: () => T("xp.story-quest.name"),
-            min: 0, max: 10000, interval: 10);
+            min: 0, max: 2000, interval: 10);
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpSources.HelpWantedQuestXp,
             setValue: v => _getConfig().XpSources.HelpWantedQuestXp = v,
             name: () => T("xp.help-wanted.name"),
-            min: 0, max: 10000, interval: 5);
+            min: 0, max: 2000, interval: 5);
 
         api.AddSectionTitle(_manifest, () => T("xp.section.optional"));
         api.AddBoolOption(_manifest,
@@ -233,7 +233,7 @@ public class GmcmIntegration
             getValue: () => _getConfig().XpSources.FestivalXp,
             setValue: v => _getConfig().XpSources.FestivalXp = v,
             name: () => T("xp.festival-xp.name"),
-            min: 0, max: 10000, interval: 5);
+            min: 0, max: 2000, interval: 5);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.NewAreaEnabled,
             setValue: v => _getConfig().XpSources.NewAreaEnabled = v,
@@ -242,7 +242,7 @@ public class GmcmIntegration
             getValue: () => _getConfig().XpSources.NewAreaXp,
             setValue: v => _getConfig().XpSources.NewAreaXp = v,
             name: () => T("xp.new-area-xp.name"),
-            min: 0, max: 10000, interval: 5);
+            min: 0, max: 2000, interval: 5);
 
         api.AddSectionTitle(_manifest, () => T("xp.section.skills"));
         api.AddBoolOption(_manifest,
@@ -254,7 +254,7 @@ public class GmcmIntegration
             getValue: () => _getConfig().XpSources.SkillLevelUpXp,
             setValue: v => _getConfig().XpSources.SkillLevelUpXp = v,
             name: () => T("xp.skill-levelup-xp.name"),
-            min: 0, max: 10000, interval: 25);
+            min: 0, max: 2000, interval: 25);
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().XpSources.SkillXpEnabled,
             setValue: v => _getConfig().XpSources.SkillXpEnabled = v,
@@ -284,14 +284,14 @@ public class GmcmIntegration
             setValue: v => _getConfig().Curve.BaseXp = v,
             name: () => T("curve.base.name"),
             tooltip: () => T("curve.base.tooltip"),
-            min: 10, max: 10000, interval: 5);
+            min: 10, max: 1000, interval: 5);
 
         api.AddNumberOption(_manifest,
             getValue: () => _getConfig().Curve.GrowthRate,
             setValue: v => _getConfig().Curve.GrowthRate = v,
             name: () => T("curve.growth.name"),
             tooltip: () => T("curve.growth.tooltip"),
-            min: 1.00f, max: 2.00f, interval: 0.01f);
+            min: 1.00f, max: 1.50f, interval: 0.01f);
     }
 
     private void AddMilestonesIndexPage(IGenericModConfigMenuApi api)
@@ -341,10 +341,10 @@ public class GmcmIntegration
         api.AddSectionTitle(_manifest, () => T("milestone.section.vitals"));
         api.AddNumberOption(_manifest,
             getValue: () => M().MaxHp, setValue: v => M().MaxHp = v,
-            name: () => T("milestone.max-hp.name"), min: 0, max: 9999, interval: 1);
+            name: () => T("milestone.max-hp.name"), min: 0, max: 500, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().MaxEnergy, setValue: v => M().MaxEnergy = v,
-            name: () => T("milestone.max-energy.name"), min: 0, max: 9999, interval: 1);
+            name: () => T("milestone.max-energy.name"), min: 0, max: 500, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().HealthRegenPerMinute, setValue: v => M().HealthRegenPerMinute = v,
             name: () => T("milestone.hp-regen.name"),
@@ -359,10 +359,10 @@ public class GmcmIntegration
         api.AddSectionTitle(_manifest, () => T("milestone.section.combat"));
         api.AddNumberOption(_manifest,
             getValue: () => M().Attack, setValue: v => M().Attack = v,
-            name: () => T("milestone.attack.name"), min: 0, max: 999, interval: 1);
+            name: () => T("milestone.attack.name"), min: 0, max: 50, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().Defense, setValue: v => M().Defense = v,
-            name: () => T("milestone.defense.name"), min: 0, max: 999, interval: 1);
+            name: () => T("milestone.defense.name"), min: 0, max: 50, interval: 1);
         api.AddNumberOption(_manifest,
             getValue: () => M().CritChance, setValue: v => M().CritChance = v,
             name: () => T("milestone.crit.name"),
@@ -384,10 +384,10 @@ public class GmcmIntegration
             getValue: () => M().MagneticRadius, setValue: v => M().MagneticRadius = v,
             name: () => T("milestone.magnetic.name"),
             tooltip: () => T("milestone.magnetic.tooltip"),
-            min: 0, max: 999, interval: 8);
+            min: 0, max: 512, interval: 8);
         api.AddNumberOption(_manifest,
             getValue: () => M().Luck, setValue: v => M().Luck = v,
-            name: () => T("milestone.luck.name"), min: 0, max: 99, interval: 1);
+            name: () => T("milestone.luck.name"), min: 0, max: 20, interval: 1);
 
         api.AddSectionTitle(_manifest, () => T("milestone.section.resource"));
         api.AddNumberOption(_manifest,

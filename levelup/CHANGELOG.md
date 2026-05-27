@@ -20,6 +20,16 @@ the entry you add below.
   manifest so SMAPI tells players when a newer version is available. Takes effect
   for anyone running this version or later.
 
+### Changed
+
+- **Tightened GMCM slider ranges so values are easier to set precisely.** Several
+  options had huge maximums (Base XP up to 10,000; +Max HP up to 9,999), which made
+  the drag sliders so coarse you couldn't land on a precise value. Lowered them to
+  sensible ceilings (Base XP 1,000; growth rate 1.50; per-source XP 2,000; and more
+  moderate milestone caps such as +Max HP 500, +Attack/+Defense 50, +Luck 20) — the
+  milestone bonuses are cumulative across slots, so the old maximums were excessive
+  anyway. A pre-existing config value above the new ceiling is clamped to it.
+
 ### Fixed
 
 - **XP curve overflow that threw players to absurd levels.** A steep growth rate
