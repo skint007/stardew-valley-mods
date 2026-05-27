@@ -254,9 +254,13 @@ public class XpBarHud
     /// </summary>
     private void DrawLevelCap(SpriteBatch sb, Texture2D cursors, int barX, int barTopY, float a)
     {
+        // Use the plain bottom-cap sprite flipped vertically rather than the top-cap sprite,
+        // which has a letter baked in. The cover plate below hides that letter at full opacity,
+        // but when the bar fades the plate turns translucent and the letter bleeds through
+        // (looked like the energy bar's "E"). A letterless cap fades cleanly.
         sb.Draw(cursors, new Vector2(barX, barTopY),
-            new Rectangle(256, 408, 12, 16),
-            Color.White * a, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+            new Rectangle(256, 448, 12, 16),
+            Color.White * a, 0f, Vector2.Zero, 4f, SpriteEffects.FlipVertically, 1f);
 
         Color panel = GetCapPanelColor(cursors);
         int plateX = barX + 8, plateY = barTopY + 8, plateW = 32, plateH = 40;

@@ -133,7 +133,7 @@ Other presets: **Casual** (200, 1.06 — faster, ~1.06M to 100), **Hardcore**
 
 | Source            | Default XP                  | Default |
 | ----------------- | --------------------------- | ------- |
-| Monster kill      | 0.5 × max HP (× 3 for bosses) | on      |
+| Monster kill      | 0.25 × max HP (× 2 for bosses) | on      |
 | Day survived      | 50                          | on      |
 | Story quest       | 100                         | on      |
 | Help Wanted quest | 25                          | on      |

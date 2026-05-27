@@ -32,8 +32,8 @@ the entry you add below.
   then stall hard after ~level 50, making level 100 feel unreachable. The curve
   presets now use a higher base and a much gentler growth, which spreads
   progression evenly across 1–100 (Standard's total drops from an effectively
-  unreachable ~681M to ~6.4M), and monster XP is toned down (per-HP 1 → 0.5, boss
-  multiplier 5 → 3). Presets: Casual `(200, 1.06)`, Standard `(250, 1.08)`,
+  unreachable ~681M to ~6.4M), and monster XP is toned down (per-HP 1 → 0.25, boss
+  multiplier 5 → 2). Presets: Casual `(200, 1.06)`, Standard `(250, 1.08)`,
   Hardcore `(300, 1.10)`.
   - **Existing saves:** player level is derived from lifetime XP, so it is
     recalculated under the new curve on load. Most characters will jump *up* a few
