@@ -24,6 +24,13 @@ public static class CropPatches
     private static BonusApplier _bonusApplier = null!;
     private static IMonitor _monitor = null!;
 
+    // Set by the prefix, read by the postfix: whether the crop was ripe when harvest was
+    // called. Needed to detect a successful harvest on regrowable crops (tomatoes, blueberries,
+    // summer squash, etc.), which call into Crop.harvest, drop their items, then return FALSE
+    // because the plant survives — not because the harvest failed.
+    [ThreadStatic]
+    private static bool _wasRipeAtHarvest;
+
     public static void Init(ModConfig config, BonusApplier bonusApplier, IMonitor monitor)
     {
         _config = config;
@@ -44,7 +51,23 @@ public static class CropPatches
         string sig = string.Join(", ", target.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"));
         _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name}({sig})", LogLevel.Info);
         harmony.Patch(target,
+            prefix: new HarmonyMethod(typeof(CropPatches), nameof(Harvest_Prefix)),
             postfix: new HarmonyMethod(typeof(CropPatches), nameof(Harvest_Postfix)));
+    }
+
+    public static void Harvest_Prefix(Crop __instance)
+    {
+        try
+        {
+            _wasRipeAtHarvest = __instance != null
+                && !__instance.dead.Value
+                && __instance.phaseDays.Count > 0
+                && __instance.currentPhase.Value >= __instance.phaseDays.Count - 1;
+        }
+        catch
+        {
+            _wasRipeAtHarvest = false;
+        }
     }
 
     public static void Harvest_Postfix(
@@ -57,8 +80,12 @@ public static class CropPatches
     {
         try
         {
-            if (!__result) return;
             if (junimoHarvester != null) return; // Junimo huts: don't pile bonus into the Junimo bag.
+            // Regrowable crops (tomatoes, blueberries, summer squash, etc.) call into harvest,
+            // drop their items, then return false because the plant survives. So the "did a
+            // harvest actually happen" gate is the ripeness captured in the prefix, OR a true
+            // return from the single-pick / forage paths.
+            if (!__result && !_wasRipeAtHarvest) return;
 
             float chance = _bonusApplier.CurrentExtraCropChance;
             if (chance <= 0f) return;
