@@ -57,6 +57,15 @@ public static class CropPatches
     {
         try
         {
+            // Spammy on purpose: log every postfix entry while DebugLogging is on so we can
+            // tell at a glance whether the patch is firing, and what state it sees. Easy to
+            // dial back to "extras > 0 only" once the bonus is verified working in the wild.
+            if (_config.DebugLogging)
+                _monitor.Log(
+                    $"CropPatches.Harvest_Postfix: result={__result}, junimo={(junimoHarvester != null)}, " +
+                    $"chance={_bonusApplier.CurrentExtraCropChance:F2}, itemId={__instance?.indexOfHarvest?.Value ?? "(null)"}",
+                    LogLevel.Debug);
+
             if (!__result) return;
             if (junimoHarvester != null) return; // Junimo huts: don't pile bonus into the Junimo bag.
 
