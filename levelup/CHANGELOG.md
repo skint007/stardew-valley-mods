@@ -14,6 +14,14 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Added
+
+- **XP bar size option (horizontal layout).** New `XpBarScale` config (range 0.5–1.5,
+  default 1.0) scales the horizontal bar's geometry so mobile / small-screen players
+  can shrink it without losing the layout. The "LVL N" label uses a fixed-size bitmap
+  font that can't cleanly scale, so the level box widens to fit it at any scale. No
+  effect on the vertical layout.
+
 ## [1.2.1] - 2026-05-27
 
 ### Fixed

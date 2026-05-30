@@ -3,6 +3,12 @@
 A short, player-friendly version of the changelog for the Nexus page. The full,
 technical history lives in [CHANGELOG.md](CHANGELOG.md).
 
+## 1.3.0
+
+New
+- The horizontal XP bar is now resizable, so mobile and small-screen players can
+  shrink it (or make it bigger). There's a new "XP bar size" slider in the settings.
+
 ## 1.2.1
 
 Fixed

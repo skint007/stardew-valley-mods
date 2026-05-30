@@ -127,6 +127,18 @@ public class XpBarHud
     // ── Horizontal bar (above the toolbar) ─────────────────────────────────────
     private void DrawHorizontal(SpriteBatch sb, int vw, int vh, int level, long totalXp, float progress)
     {
+        // Scale the layout for small-screen / mobile users. Geometry scales; the SpriteText
+        // "LVL N" label uses a fixed-size bitmap font that can't be cleanly scaled, so the LVL
+        // box widens via Math.Max to fit the label at any scale.
+        float s = Math.Clamp(_config.XpBarScale, 0.5f, 1.5f);
+        int totalWidth = (int)Math.Round(TotalWidth   * s);
+        int barHeight  = (int)Math.Round(BarHeight    * s);
+        int boxGap     = (int)Math.Round(BoxGap       * s);
+        int toolbarGap = (int)Math.Round(ToolbarGap   * s);
+        int border     = (int)Math.Round(Border       * s);
+        int shadow     = Math.Max(1, (int)Math.Round(3 * s));
+        int highlight  = Math.Max(1, (int)Math.Round(4 * s));
+
         // Anchor just above the toolbar (when it's at the bottom; otherwise fall back to the
         // bottom position so we stay bottom-center even if the toolbar flips up).
         int toolbarTop = vh - 104;
@@ -140,46 +152,46 @@ public class XpBarHud
             }
         }
 
-        int barBottom = toolbarTop - ToolbarGap;
-        int barTop    = barBottom - BarHeight;
-        int left      = vw / 2 - TotalWidth / 2;
+        int barBottom = toolbarTop - toolbarGap;
+        int barTop    = barBottom - barHeight;
+        int left      = vw / 2 - totalWidth / 2;
 
         string label   = _i18n.Get("hud.level-label", new { level });
         int    labelW  = SpriteText.getWidthOfString(label);
-        int    lvlBoxW = Math.Max(140, labelW + 2 * Border + 16);
-        int    xpBoxX  = left + lvlBoxW + BoxGap;
-        int    xpBoxW  = TotalWidth - lvlBoxW - BoxGap;
+        int    lvlBoxW = Math.Max((int)Math.Round(140 * s), labelW + 2 * border + 16);
+        int    xpBoxX  = left + lvlBoxW + boxGap;
+        int    xpBoxW  = totalWidth - lvlBoxW - boxGap;
 
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
-            left, barTop, lvlBoxW, BarHeight, Color.White, scale: 1f, drawShadow: false);
+            left, barTop, lvlBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
 
         int labelH = SpriteText.getHeightOfString(label);
         int labelX = left + (lvlBoxW - labelW) / 2;
         // +6: SpriteText reports a tall bounding box (trailing space below the glyphs), so a
         // pure center sits visually high — nudge down to optically center in the frame.
-        int labelY = barTop + (BarHeight - labelH) / 2 + 6;
+        int labelY = barTop + (barHeight - labelH) / 2 + 6;
         SpriteText.drawString(sb, label, labelX, labelY, color: LabelColor);
 
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
-            xpBoxX, barTop, xpBoxW, BarHeight, Color.White, scale: 1f, drawShadow: false);
+            xpBoxX, barTop, xpBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
 
-        int trackX = xpBoxX + Border;
-        int trackY = barTop  + Border;
-        int trackW = xpBoxW  - 2 * Border;
-        int trackH = BarHeight - 2 * Border;
+        int trackX = xpBoxX + border;
+        int trackY = barTop  + border;
+        int trackW = xpBoxW  - 2 * border;
+        int trackH = barHeight - 2 * border;
 
-        sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, trackW, 3), TrackShadow);
-        sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, 3, trackH), TrackShadow);
+        sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, trackW, shadow), TrackShadow);
+        sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, shadow, trackH), TrackShadow);
 
         int fillW = (int)Math.Round(trackW * progress);
         if (fillW > 0)
         {
             sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, fillW, trackH), FillColor);
-            sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, fillW, 4), FillHighlight);
+            sb.Draw(Game1.staminaRect, new Rectangle(trackX, trackY, fillW, highlight), FillHighlight);
         }
 
         DrawPopup(sb, xpBoxX + xpBoxW / 2f, barTop);
-        SetHoverTip(new Rectangle(left, barTop, TotalWidth, BarHeight), level, totalXp);
+        SetHoverTip(new Rectangle(left, barTop, totalWidth, barHeight), level, totalXp);
     }
 
     // ── Vertical bar (left of the HP/Energy bars) ──────────────────────────────

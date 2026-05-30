@@ -33,6 +33,13 @@ public class ModConfig
     /// </summary>
     public bool FadeVerticalBarWhenIdle { get; set; } = true;
 
+    /// <summary>
+    /// Scale factor for the horizontal XP bar layout (1.0 = current size). Useful for small
+    /// screens / mobile where the default 800-px-wide bar feels too large. Clamped at draw
+    /// time so absurd values can't break layout. No effect on the vertical layout.
+    /// </summary>
+    public float XpBarScale { get; set; } = 1.0f;
+
     /// <summary>Show a HUD message when the player levels up.</summary>
     public bool ShowLevelUpNotification { get; set; } = true;
 

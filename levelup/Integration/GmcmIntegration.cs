@@ -121,6 +121,13 @@ public class GmcmIntegration
             name: () => T("config.fade-vertical-bar.name"),
             tooltip: () => T("config.fade-vertical-bar.tooltip"));
 
+        api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().XpBarScale,
+            setValue: v => _getConfig().XpBarScale = v,
+            name: () => T("config.xp-bar-scale.name"),
+            tooltip: () => T("config.xp-bar-scale.tooltip"),
+            min: 0.5f, max: 1.5f, interval: 0.05f);
+
         api.AddBoolOption(_manifest,
             getValue: () => _getConfig().ShowLevelUpNotification,
             setValue: v => _getConfig().ShowLevelUpNotification = v,
