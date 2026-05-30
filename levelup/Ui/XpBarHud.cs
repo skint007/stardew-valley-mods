@@ -178,9 +178,13 @@ public class XpBarHud
             new Rectangle(left + border, barTop + border, lvlBoxW - 2 * border, barHeight - 2 * border),
             new Color(18, 18, 28) * 0.6f);
 
+        // smallFont's MeasureString.Y is the full line height with reserved space for
+        // descenders. "LVL N" has none, so a pure center sits a hair high optically; nudge
+        // down by ~10% of the measured height (scales naturally with the label).
+        float verticalNudge = labelH * 0.10f;
         var labelPos = new Vector2(
             left + (lvlBoxW - labelW) / 2f,
-            barTop + (barHeight - labelH) / 2f
+            barTop + (barHeight - labelH) / 2f + verticalNudge
         );
         sb.DrawString(Game1.smallFont, label, labelPos, Color.White,
             0f, Vector2.Zero, labelScale, SpriteEffects.None, 1f);
