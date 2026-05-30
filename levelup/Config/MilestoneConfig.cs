@@ -56,4 +56,26 @@ public class MilestoneConfig
 
     /// <summary>Additive bonus to shop sell prices, e.g. 0.05 = +5% sell price.</summary>
     public float SellPriceBonus { get; set; } = 0f;
+
+    // ── Gameplay bonuses (consumed by Harmony patches) ─────────────────────
+
+    /// <summary>
+    /// Additive chance of rolling a bonus crop on harvest, e.g. 0.10 = +10% chance.
+    /// Values &gt; 1.0 guarantee that many extras plus a roll for one more (e.g. 1.20 =
+    /// always +1, plus 20% chance of +2).
+    /// </summary>
+    public float ExtraCropChance { get; set; } = 0f;
+
+    /// <summary>
+    /// Additive chance of duplicating ore / stone-node drops, e.g. 0.10 = +10% chance per
+    /// drop. &gt;1.0 grants guaranteed extras with a roll for one more.
+    /// </summary>
+    public float ExtraOreChance { get; set; } = 0f;
+
+    /// <summary>
+    /// Additive speed-up applied to machine processing times, e.g. 0.10 = 10% faster
+    /// (minutes scaled by 1 / (1 + bonus)). Only affects machines placed after the bonus
+    /// is in effect, not already-running ones.
+    /// </summary>
+    public float MachineSpeedBonus { get; set; } = 0f;
 }

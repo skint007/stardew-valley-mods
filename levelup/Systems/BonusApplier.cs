@@ -40,6 +40,15 @@ public class BonusApplier
     /// <summary>Current cumulative energy regen rate (energy per real-time minute).</summary>
     public float CurrentEnergyRegenPerMinute { get; private set; }
 
+    /// <summary>Current cumulative bonus-crop chance, consumed by the Crop.harvest patch.</summary>
+    public float CurrentExtraCropChance { get; private set; }
+
+    /// <summary>Current cumulative bonus-ore chance, consumed by the OnStoneDestroyed patch.</summary>
+    public float CurrentExtraOreChance { get; private set; }
+
+    /// <summary>Current cumulative machine-speed bonus, consumed by the PlaceInMachine patch.</summary>
+    public float CurrentMachineSpeedBonus { get; private set; }
+
     // Fractional carry between ticks so a slow regen rate (e.g. 0.5/min) still applies
     // whole HP/energy points over time instead of always rounding to zero.
     private float _hpAccumulator;
@@ -74,6 +83,9 @@ public class BonusApplier
             sum.Luck                 += m.Luck;
             sum.XpMultiplier         += m.XpMultiplier;
             sum.SellPriceBonus       += m.SellPriceBonus;
+            sum.ExtraCropChance      += m.ExtraCropChance;
+            sum.ExtraOreChance       += m.ExtraOreChance;
+            sum.MachineSpeedBonus    += m.MachineSpeedBonus;
         }
         return sum;
     }
@@ -100,6 +112,9 @@ public class BonusApplier
             CurrentSellPriceBonus = 0f;
             CurrentHealthRegenPerMinute = 0f;
             CurrentEnergyRegenPerMinute = 0f;
+            CurrentExtraCropChance = 0f;
+            CurrentExtraOreChance = 0f;
+            CurrentMachineSpeedBonus = 0f;
             _hpAccumulator = 0f;
             _energyAccumulator = 0f;
             RemoveBuff(player);
@@ -123,6 +138,9 @@ public class BonusApplier
         CurrentSellPriceBonus = bonus.SellPriceBonus;
         CurrentHealthRegenPerMinute = bonus.HealthRegenPerMinute;
         CurrentEnergyRegenPerMinute = bonus.EnergyRegenPerMinute;
+        CurrentExtraCropChance = bonus.ExtraCropChance;
+        CurrentExtraOreChance = bonus.ExtraOreChance;
+        CurrentMachineSpeedBonus = bonus.MachineSpeedBonus;
         if (CurrentHealthRegenPerMinute <= 0f) _hpAccumulator = 0f;
         if (CurrentEnergyRegenPerMinute <= 0f) _energyAccumulator = 0f;
 

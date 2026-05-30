@@ -122,5 +122,12 @@
   "milestone.xp-gain.name": "+XP gain",
   "milestone.xp-gain.tooltip": "Additive bonus to all skill XP. 0.10 = +10% XP.",
   "milestone.sell-price.name": "+Sell price",
-  "milestone.sell-price.tooltip": "Additive bonus to shop sell prices. 0.05 = +5%."
+  "milestone.sell-price.tooltip": "Additive bonus to shop sell prices. 0.05 = +5%.",
+  "milestone.section.gameplay": "Gameplay",
+  "milestone.extra-crops.name": "+Extra crop chance",
+  "milestone.extra-crops.tooltip": "Chance to roll a bonus crop on harvest. 0.10 = +10% chance per harvest. Values above 1.0 grant guaranteed extras (1.20 = always +1, plus 20% chance of +2).",
+  "milestone.extra-ore.name": "+Extra ore chance",
+  "milestone.extra-ore.tooltip": "Chance to duplicate ore / stone-node drops from mining. 0.10 = +10% chance per drop. Values above 1.0 grant guaranteed extras.",
+  "milestone.machine-speed.name": "+Machine speed",
+  "milestone.machine-speed.tooltip": "Speeds up machine processing time. 0.10 = 10% faster. Only affects machines placed AFTER reaching this milestone; already-running machines keep their original timer."
 }

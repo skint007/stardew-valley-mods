@@ -52,10 +52,16 @@ public class ModEntry : Mod
         QuestPatches.Init(_config, _saveData, _xpTracker, _notifier, _bonusApplier, Monitor);
         ObjectPatches.Init(_bonusApplier, Monitor);
         FarmerPatches.Init(_config, _saveData, _xpTracker, _notifier, _bonusApplier, Monitor);
+        CropPatches.Init(_bonusApplier, Monitor);
+        StonePatches.Init(_bonusApplier, Monitor);
+        MachinePatches.Init(_bonusApplier, Monitor);
         MonsterPatches.Apply(harmony);
         QuestPatches.Apply(harmony);
         ObjectPatches.Apply(harmony);
         FarmerPatches.Apply(harmony);
+        CropPatches.Apply(harmony);
+        StonePatches.Apply(harmony);
+        MachinePatches.Apply(harmony);
 
         // Wire SMAPI events.
         helper.Events.GameLoop.GameLaunched += OnGameLaunched;

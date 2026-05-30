@@ -413,5 +413,22 @@ public class GmcmIntegration
             name: () => T("milestone.sell-price.name"),
             tooltip: () => T("milestone.sell-price.tooltip"),
             min: 0f, max: 5f, interval: 0.01f);
+
+        api.AddSectionTitle(_manifest, () => T("milestone.section.gameplay"));
+        api.AddNumberOption(_manifest,
+            getValue: () => M().ExtraCropChance, setValue: v => M().ExtraCropChance = v,
+            name: () => T("milestone.extra-crops.name"),
+            tooltip: () => T("milestone.extra-crops.tooltip"),
+            min: 0f, max: 2f, interval: 0.05f);
+        api.AddNumberOption(_manifest,
+            getValue: () => M().ExtraOreChance, setValue: v => M().ExtraOreChance = v,
+            name: () => T("milestone.extra-ore.name"),
+            tooltip: () => T("milestone.extra-ore.tooltip"),
+            min: 0f, max: 2f, interval: 0.05f);
+        api.AddNumberOption(_manifest,
+            getValue: () => M().MachineSpeedBonus, setValue: v => M().MachineSpeedBonus = v,
+            name: () => T("milestone.machine-speed.name"),
+            tooltip: () => T("milestone.machine-speed.tooltip"),
+            min: 0f, max: 2f, interval: 0.05f);
     }
 }

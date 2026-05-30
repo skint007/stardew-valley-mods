@@ -8,6 +8,12 @@ technical history lives in [CHANGELOG.md](CHANGELOG.md).
 New
 - The horizontal XP bar is now resizable, so mobile and small-screen players can
   shrink it (or make it bigger). There's a new "XP bar size" slider in the settings.
+- Three new milestone bonuses you can assign in the settings (off by default, so
+  existing milestones stay the same):
+  - **+Extra crop chance** for a chance at a bonus crop on harvest.
+  - **+Extra ore chance** for a chance to double up on what you mine.
+  - **+Machine speed** to make machines (kegs, furnaces, preserves jars, and so on)
+    finish faster.
 
 ## 1.2.1
 

@@ -21,6 +21,19 @@ the entry you add below.
   can shrink it without losing the layout. The "LVL N" label uses a fixed-size bitmap
   font that can't cleanly scale, so the level box widens to fit it at any scale. No
   effect on the vertical layout.
+- **Three new gameplay milestone bonuses.** All disabled by default (existing presets
+  unchanged); enable per-milestone in GMCM under the new "Gameplay" section.
+  - **+Extra crop chance** — chance to roll a bonus copy of the crop you harvest.
+    Postfix on `Crop.harvest`; Junimo harvests are skipped. Values above 1.0 grant
+    guaranteed extras plus a roll for one more.
+  - **+Extra ore chance** — chance to duplicate ore / stone-node drops from mining.
+    Pre+postfix on `GameLocation.OnStoneDestroyed`, snapshotting `location.debris` and
+    duplicating any items added during the call. Works for every node type (stone,
+    copper / iron / gold / iridium, coal, gems, geodes, bones) without a per-id map.
+  - **+Machine speed** — scales a machine's processing time down by `1 / (1 + bonus)`
+    at placement. Postfix on `Object.PlaceInMachine`. Only affects machines started
+    after the milestone is unlocked; already-running machines keep their original
+    timer.
 
 ## [1.2.1] - 2026-05-27
 
