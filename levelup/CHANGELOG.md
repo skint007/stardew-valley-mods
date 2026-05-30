@@ -17,10 +17,12 @@ the entry you add below.
 ### Added
 
 - **XP bar size option (horizontal layout).** New `XpBarScale` config (range 0.5–1.5,
-  default 1.0) scales the horizontal bar's geometry so mobile / small-screen players
-  can shrink it without losing the layout. The "LVL N" label uses a fixed-size bitmap
-  font that can't cleanly scale, so the level box widens to fit it at any scale. No
-  effect on the vertical layout.
+  default 1.0) scales the horizontal bar's geometry, the "LVL N" label, and a new dark
+  inset plate behind the label together, so mobile / small-screen players can shrink
+  the bar without losing the layout or readability. The label switched from
+  `SpriteText` (a fixed-size bitmap font) to `smallFont` (a TrueType font) so it
+  scales smoothly instead of overshooting the bar at small sizes. No effect on the
+  vertical layout.
 - **Three new gameplay milestone bonuses.** All disabled by default (existing presets
   unchanged); enable per-milestone in GMCM under the new "Gameplay" section.
   - **+Extra crop chance** — chance to roll a bonus copy of the crop you harvest.

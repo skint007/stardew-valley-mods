@@ -156,29 +156,34 @@ public class XpBarHud
         int barTop    = barBottom - barHeight;
         int left      = vw / 2 - totalWidth / 2;
 
-        string label   = _i18n.Get("hud.level-label", new { level });
-        int    labelW  = SpriteText.getWidthOfString(label);
-        int    lvlBoxW = Math.Max((int)Math.Round(140 * s), labelW + 2 * border + 16);
-        int    xpBoxX  = left + lvlBoxW + boxGap;
-        int    xpBoxW  = totalWidth - lvlBoxW - boxGap;
+        // Use smallFont (a regular-weight TrueType font) for the level label so it scales
+        // smoothly with the bar at any size. The original SpriteText is a fixed-size bitmap
+        // font that overshoots the bar height at small scales.
+        string label = _i18n.Get("hud.level-label", new { level });
+        float labelScale = 1.5f * s;
+        Vector2 labelSize = Game1.smallFont.MeasureString(label) * labelScale;
+        int labelW = (int)Math.Ceiling(labelSize.X);
+        int labelH = (int)Math.Ceiling(labelSize.Y);
+        int labelPad = (int)Math.Round(16 * s);
+        int lvlBoxW = labelW + 2 * border + labelPad;
+        int xpBoxX  = left + lvlBoxW + boxGap;
+        int xpBoxW  = totalWidth - lvlBoxW - boxGap;
 
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             left, barTop, lvlBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
 
-        // Dark inset plate behind the LVL text. SpriteText is a fixed-size bitmap font that
-        // doesn't scale with the bar, so the purple-on-wood version became hard to read at low
-        // scales; a low-opacity dark plate inside the wood frame gives high-contrast backing
-        // at any size.
+        // Dark inset plate behind the LVL text. Gives a high-contrast backing for the label
+        // regardless of how the wood frame is colored by recolor mods.
         sb.Draw(Game1.staminaRect,
             new Rectangle(left + border, barTop + border, lvlBoxW - 2 * border, barHeight - 2 * border),
             new Color(18, 18, 28) * 0.6f);
 
-        int labelH = SpriteText.getHeightOfString(label);
-        int labelX = left + (lvlBoxW - labelW) / 2;
-        // +6: SpriteText reports a tall bounding box (trailing space below the glyphs), so a
-        // pure center sits visually high — nudge down to optically center in the frame.
-        int labelY = barTop + (barHeight - labelH) / 2 + 6;
-        SpriteText.drawString(sb, label, labelX, labelY, color: Color.White);
+        var labelPos = new Vector2(
+            left + (lvlBoxW - labelW) / 2f,
+            barTop + (barHeight - labelH) / 2f
+        );
+        sb.DrawString(Game1.smallFont, label, labelPos, Color.White,
+            0f, Vector2.Zero, labelScale, SpriteEffects.None, 1f);
 
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             xpBoxX, barTop, xpBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
