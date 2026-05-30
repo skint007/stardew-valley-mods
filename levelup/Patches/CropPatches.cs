@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using LevelUp.Config;
 using LevelUp.Systems;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -18,20 +19,29 @@ namespace LevelUp.Patches;
 /// </summary>
 public static class CropPatches
 {
+    private static ModConfig _config = null!;
     private static BonusApplier _bonusApplier = null!;
     private static IMonitor _monitor = null!;
 
-    public static void Init(BonusApplier bonusApplier, IMonitor monitor)
+    public static void Init(ModConfig config, BonusApplier bonusApplier, IMonitor monitor)
     {
+        _config = config;
         _bonusApplier = bonusApplier;
         _monitor = monitor;
     }
 
     public static void Apply(Harmony harmony)
     {
-        harmony.Patch(
-            original: AccessTools.Method(typeof(Crop), nameof(Crop.harvest),
-                new[] { typeof(int), typeof(int), typeof(HoeDirt), typeof(JunimoHarvester), typeof(bool) }),
+        // Match by name only (not signature) so a 1.6.x parameter tweak doesn't silently leave
+        // the postfix unpatched. There's only one Crop.harvest in vanilla.
+        var target = AccessTools.Method(typeof(Crop), nameof(Crop.harvest));
+        if (target == null)
+        {
+            _monitor.Log("CropPatches: couldn't resolve Crop.harvest; bonus-crop milestone bonus will not fire.", LogLevel.Warn);
+            return;
+        }
+        _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name} ({target.GetParameters().Length} params)", LogLevel.Debug);
+        harmony.Patch(target,
             postfix: new HarmonyMethod(typeof(CropPatches), nameof(Harvest_Postfix)));
     }
 
@@ -62,6 +72,9 @@ public static class CropPatches
 
             var player = Game1.player;
             if (player == null) return;
+
+            if (_config.DebugLogging)
+                _monitor.Log($"+{extras} bonus crop ({itemId}) from harvest at ({xTile},{yTile})", LogLevel.Debug);
 
             // Try inventory first; if it doesn't all fit, drop the remainder at the tile.
             Item? leftover = player.addItemToInventory(item);

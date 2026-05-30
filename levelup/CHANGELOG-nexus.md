@@ -8,6 +8,7 @@ technical history lives in [CHANGELOG.md](CHANGELOG.md).
 New
 - The horizontal XP bar is now resizable, so mobile and small-screen players can
   shrink it (or make it bigger). There's a new "XP bar size" slider in the settings.
+- The "LVL" number now sits on a dark plate so it's easier to read at any size.
 - Three new milestone bonuses you can assign in the settings (off by default, so
   existing milestones stay the same):
   - **+Extra crop chance** for a chance at a bonus crop on harvest.

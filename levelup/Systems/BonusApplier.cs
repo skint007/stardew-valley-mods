@@ -151,7 +151,8 @@ public class BonusApplier
                 $"+{bonus.HealthRegenPerMinute}/min hp-regen, +{bonus.EnergyRegenPerMinute}/min en-regen, " +
                 $"+{bonus.Attack} atk, +{bonus.Defense} def, +{bonus.CritChance:P0} crit, " +
                 $"+{bonus.WeaponSpeed:P0} wspd, +{bonus.MovementSpeed} mspd, +{bonus.MagneticRadius} mag, " +
-                $"+{bonus.Luck} luck, +{bonus.XpMultiplier:P0} xp, +{bonus.SellPriceBonus:P0} sell",
+                $"+{bonus.Luck} luck, +{bonus.XpMultiplier:P0} xp, +{bonus.SellPriceBonus:P0} sell, " +
+                $"+{bonus.ExtraCropChance:P0} crop, +{bonus.ExtraOreChance:P0} ore, +{bonus.MachineSpeedBonus:P0} mach",
                 LogLevel.Debug);
         }
     }

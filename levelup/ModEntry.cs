@@ -52,7 +52,7 @@ public class ModEntry : Mod
         QuestPatches.Init(_config, _saveData, _xpTracker, _notifier, _bonusApplier, Monitor);
         ObjectPatches.Init(_bonusApplier, Monitor);
         FarmerPatches.Init(_config, _saveData, _xpTracker, _notifier, _bonusApplier, Monitor);
-        CropPatches.Init(_bonusApplier, Monitor);
+        CropPatches.Init(_config, _bonusApplier, Monitor);
         StonePatches.Init(_bonusApplier, Monitor);
         MachinePatches.Init(_bonusApplier, Monitor);
         MonsterPatches.Apply(harmony);

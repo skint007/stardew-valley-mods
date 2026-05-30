@@ -165,12 +165,20 @@ public class XpBarHud
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             left, barTop, lvlBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
 
+        // Dark inset plate behind the LVL text. SpriteText is a fixed-size bitmap font that
+        // doesn't scale with the bar, so the purple-on-wood version became hard to read at low
+        // scales; a low-opacity dark plate inside the wood frame gives high-contrast backing
+        // at any size.
+        sb.Draw(Game1.staminaRect,
+            new Rectangle(left + border, barTop + border, lvlBoxW - 2 * border, barHeight - 2 * border),
+            new Color(18, 18, 28) * 0.6f);
+
         int labelH = SpriteText.getHeightOfString(label);
         int labelX = left + (lvlBoxW - labelW) / 2;
         // +6: SpriteText reports a tall bounding box (trailing space below the glyphs), so a
         // pure center sits visually high — nudge down to optically center in the frame.
         int labelY = barTop + (barHeight - labelH) / 2 + 6;
-        SpriteText.drawString(sb, label, labelX, labelY, color: LabelColor);
+        SpriteText.drawString(sb, label, labelX, labelY, color: Color.White);
 
         IClickableMenu.drawTextureBox(sb, Game1.menuTexture, FrameSource,
             xpBoxX, barTop, xpBoxW, barHeight, Color.White, scale: 1f, drawShadow: false);
