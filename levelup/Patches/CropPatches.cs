@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using HarmonyLib;
 using LevelUp.Config;
 using LevelUp.Systems;
@@ -40,7 +41,8 @@ public static class CropPatches
             _monitor.Log("CropPatches: couldn't resolve Crop.harvest; bonus-crop milestone bonus will not fire.", LogLevel.Warn);
             return;
         }
-        _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name} ({target.GetParameters().Length} params)", LogLevel.Debug);
+        string sig = string.Join(", ", target.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"));
+        _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name}({sig})", LogLevel.Debug);
         harmony.Patch(target,
             postfix: new HarmonyMethod(typeof(CropPatches), nameof(Harvest_Postfix)));
     }
