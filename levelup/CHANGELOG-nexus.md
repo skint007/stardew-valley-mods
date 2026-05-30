@@ -3,6 +3,13 @@
 A short, player-friendly version of the changelog for the Nexus page. The full,
 technical history lives in [CHANGELOG.md](CHANGELOG.md).
 
+## 1.2.1
+
+Fixed
+- Fixed a bug where saving mid-day (on mobile, or with mods like Save Anywhere on
+  PC) could roll your level back to where it was when you woke up. Progress is now
+  saved continuously so any save captures your current level.
+
 ## 1.2.0
 
 New

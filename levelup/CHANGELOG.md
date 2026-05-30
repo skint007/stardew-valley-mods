@@ -14,6 +14,14 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Mid-day saves losing XP/level progress.** The mod only persisted to
+  `Farmer.modData` at end-of-day events, so a save written mid-day (mobile
+  Stardew, Save Anywhere, etc.) serialized the previous night's snapshot, and on
+  reload the level appeared to regress to the wake-up value. `XpTracker.AwardXp`
+  now flushes modData on every XP gain so any save path captures current state.
+
 ## [1.2.0] - 2026-05-27
 
 ### Added

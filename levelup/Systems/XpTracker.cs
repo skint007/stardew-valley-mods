@@ -45,17 +45,21 @@ public class XpTracker
 
         _saveData.Current.TotalXp = before + amount;
         int newLevel = _calculator.LevelForTotalXp(_saveData.Current.TotalXp);
+        bool leveledUp = newLevel > oldLevel;
+        if (leveledUp)
+            _saveData.Current.Level = newLevel;
+
+        // Flush to modData immediately so non-end-of-day saves (mobile mid-day saves, Save
+        // Anywhere, etc.) capture current progress. Without this, the only writes happen at
+        // OnDayEnding / OnSaving, so a mid-day save serializes the previous night's snapshot
+        // and the level appears to regress to the wake-up value on reload.
+        _saveData.Save();
 
         if (_config.DebugLogging)
             _monitor.Log($"+{amount} XP from {source} (total {_saveData.Current.TotalXp})", LogLevel.Debug);
 
         XpAwarded?.Invoke(amount, source);
 
-        if (newLevel > oldLevel)
-        {
-            _saveData.Current.Level = newLevel;
-            return true;
-        }
-        return false;
+        return leveledUp;
     }
 }
