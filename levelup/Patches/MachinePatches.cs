@@ -34,6 +34,7 @@ public static class MachinePatches
             _monitor.Log("MachinePatches: couldn't resolve Object.PlaceInMachine; skipping.", LogLevel.Warn);
             return;
         }
+        _monitor.Log($"MachinePatches: patched {target.DeclaringType?.Name}.{target.Name}", LogLevel.Info);
         harmony.Patch(target,
             postfix: new HarmonyMethod(typeof(MachinePatches), nameof(PlaceInMachine_Postfix)));
     }

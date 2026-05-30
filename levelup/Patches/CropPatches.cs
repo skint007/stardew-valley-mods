@@ -42,7 +42,7 @@ public static class CropPatches
             return;
         }
         string sig = string.Join(", ", target.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"));
-        _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name}({sig})", LogLevel.Debug);
+        _monitor.Log($"CropPatches: patched {target.DeclaringType?.Name}.{target.Name}({sig})", LogLevel.Info);
         harmony.Patch(target,
             postfix: new HarmonyMethod(typeof(CropPatches), nameof(Harvest_Postfix)));
     }

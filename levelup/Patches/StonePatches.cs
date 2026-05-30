@@ -35,6 +35,12 @@ public static class StonePatches
     public static void Apply(Harmony harmony)
     {
         var target = AccessTools.Method(typeof(GameLocation), nameof(GameLocation.OnStoneDestroyed));
+        if (target == null)
+        {
+            _monitor.Log("StonePatches: couldn't resolve OnStoneDestroyed; bonus-ore milestone bonus will not fire.", LogLevel.Warn);
+            return;
+        }
+        _monitor.Log($"StonePatches: patched {target.DeclaringType?.Name}.{target.Name}", LogLevel.Info);
         harmony.Patch(target,
             prefix: new HarmonyMethod(typeof(StonePatches), nameof(OnStoneDestroyed_Prefix)),
             postfix: new HarmonyMethod(typeof(StonePatches), nameof(OnStoneDestroyed_Postfix)));
