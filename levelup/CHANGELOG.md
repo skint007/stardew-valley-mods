@@ -14,6 +14,8 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-30
+
 ### Added
 
 - **XP bar size option (horizontal layout).** New `XpBarScale` config (range 0.5–1.5,
@@ -177,7 +179,8 @@ First complete release.
 - Generic Mod Config Menu integration for all settings (soft dependency).
 - Console commands for inspecting/adjusting progress.
 
-[Unreleased]: https://example.com/compare/v1.2.1...HEAD
+[Unreleased]: https://example.com/compare/v1.3.0...HEAD
+[1.3.0]: https://example.com/compare/v1.2.1...v1.3.0
 [1.2.1]: https://example.com/compare/v1.2.0...v1.2.1
 [1.2.0]: https://example.com/compare/v1.1.1...v1.2.0
 [1.1.1]: https://example.com/compare/v1.1.0...v1.1.1
