@@ -60,6 +60,18 @@ public static class FarmerPatches
 
             int original = howMuch;
 
+            // Surface suspiciously large single grants regardless of DebugLogging. Vanilla
+            // skill actions cap out around a few hundred XP; anything in the thousands is
+            // almost certainly another mod bulk-granting skill XP, and at SkillXpRate >= 1.0
+            // that maps straight into meta XP and can rocket the player several levels at
+            // once. Skill index in the source label helps identify the culprit (0=farming,
+            // 1=fishing, 2=foraging, 3=mining, 4=combat, 5+ = SpaceCore custom skills).
+            if (original >= 1000)
+                _monitor.Log(
+                    $"Large skill-XP grant: skill={which}, amount={original}. Another mod is " +
+                    $"bulk-granting skill XP; mapped to meta via SkillXpRate={_config.XpSources.SkillXpRate:F2}.",
+                    LogLevel.Warn);
+
             // 1. Milestone XP-gain multiplier (inflate the vanilla skill XP).
             float mult = _bonusApplier.CurrentXpMultiplier;
             if (mult > 0f)
@@ -76,7 +88,7 @@ public static class FarmerPatches
                 if (meta > 0)
                 {
                     int oldLevel = _saveData.Current.Level;
-                    if (_xpTracker.AwardXp(meta, "skill-xp"))
+                    if (_xpTracker.AwardXp(meta, $"skill-xp:{which}"))
                     {
                         _notifier.NotifyLevelUp(oldLevel, _saveData.Current.Level);
                         _bonusApplier.ApplyAll();
