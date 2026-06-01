@@ -4,7 +4,7 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
-## Unreleased
+## 1.3.1
 
 Fixed
 - Fixed a bug where loading a save, returning to title, and then starting or loading another save in the same session could carry the first save's level over. Progress is properly per-character again; each save starts at its own level.
