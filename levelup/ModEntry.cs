@@ -66,6 +66,7 @@ public class ModEntry : Mod
         // Wire SMAPI events.
         helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+        helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         helper.Events.GameLoop.DayStarted += OnDayStarted;
         helper.Events.GameLoop.DayEnding += OnDayEnding;
         helper.Events.GameLoop.Saving += OnSaving;
@@ -141,6 +142,16 @@ public class ModEntry : Mod
 
         _gmcm.OpenMenu();
         Helper.Input.Suppress(e.Button);
+    }
+
+    private void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
+    {
+        // Wipe in-memory progress so the next save load starts from a clean slate. Without
+        // this, if the player goes title -> new save without restarting the game, the old
+        // save's data sits in _saveData.Current and any pre-SaveLoaded write path leaks it
+        // into the new Farmer's modData.
+        _saveData.Clear();
+        _attendedFestivalToday = false;
     }
 
     private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)

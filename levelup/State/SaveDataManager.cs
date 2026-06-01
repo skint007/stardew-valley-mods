@@ -57,10 +57,26 @@ public class SaveDataManager
     /// <summary>Persist the current data onto the local player's modData.</summary>
     public void Save()
     {
+        // Only write when a save is fully loaded. Without this gate, an XP-award path that
+        // happens to fire during the new-game / title-screen window (intro skill-XP, a
+        // pre-SaveLoaded warp, etc.) would flush the previous save's in-memory state onto
+        // the fresh Farmer's modData and "inherit" the old level into the new save.
+        if (!Context.IsWorldReady) return;
+
         var player = Game1.player;
         if (player == null) return;
 
         player.modData[ModDataKey] = JsonSerializer.Serialize(Current);
+    }
+
+    /// <summary>
+    /// Wipe the in-memory <see cref="Current"/> data without touching modData. Call when the
+    /// player returns to title so a subsequent new-game / save-load starts from a clean slate
+    /// even if anything writes before the next <see cref="Load"/>.
+    /// </summary>
+    public void Clear()
+    {
+        Current = new PlayerLevelData();
     }
 
     /// <summary>Reset XP and level back to defaults (keeps baselines).</summary>

@@ -14,6 +14,18 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Progress leaking between saves in the same session.** Loading save A, returning
+  to title, then starting / loading save B could carry over save A's level. The
+  in-memory `SaveDataManager.Current` kept save A's data until `SaveLoaded` fired
+  for save B, and any write path that happened to run in between (the mid-day-save
+  flush added in 1.2.1, a pre-load warp with NewArea XP enabled, or an intro skill
+  XP grant) flushed that stale data onto save B's farmer modData. Two defenses:
+  `Save()` now refuses to write modData while `Context.IsWorldReady` is false, and
+  a new `ReturnedToTitle` handler clears the in-memory state when the player exits
+  to title.
+
 ## [1.3.0] - 2026-05-30
 
 ### Added
