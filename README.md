@@ -8,7 +8,7 @@ lives in its own folder with its own solution and can be built independently.
 | Mod | Version | Description |
 | --- | --- | --- |
 | [Better Fertilizer](BetterFertilizer/README.md) | 1.2.0 | Configurable fertilizer overhaul: multi-fertilizer stacking, fertilize anytime, keep fertilizer across seasons, tunable potencies/craft amounts, plus a Tree Fertilizer that works on fruit trees. |
-| [Level Up](levelup/README.md) | 1.1.1 | A meta player-level system earned from in-world actions (kills, days, quests), with milestone-based stat bonuses fully configurable via GMCM. |
+| [Level Up](levelup/README.md) | 1.3.1 | A meta player-level system earned from in-world actions (kills, days, quests), with milestone-based stat bonuses fully configurable via GMCM. |
 
 Both mods optionally integrate with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098)
 for in-game configuration.
