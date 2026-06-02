@@ -14,6 +14,8 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-06-01
+
 ### Fixed
 
 - **Bonus crops dropping repeatedly when sweeping a scythe over already-harvested
@@ -219,7 +221,8 @@ First complete release.
 - Generic Mod Config Menu integration for all settings (soft dependency).
 - Console commands for inspecting/adjusting progress.
 
-[Unreleased]: https://example.com/compare/v1.3.2...HEAD
+[Unreleased]: https://example.com/compare/v1.3.3...HEAD
+[1.3.3]: https://example.com/compare/v1.3.2...v1.3.3
 [1.3.2]: https://example.com/compare/v1.3.1...v1.3.2
 [1.3.1]: https://example.com/compare/v1.3.0...v1.3.1
 [1.3.0]: https://example.com/compare/v1.2.1...v1.3.0

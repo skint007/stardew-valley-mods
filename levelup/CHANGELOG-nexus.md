@@ -4,7 +4,7 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
-## Unreleased
+## 1.3.3
 
 Fixed
 - Bonus crops no longer keep dropping when you sweep a scythe (especially the Iridium scythe) back over a crop you've already harvested that's currently regrowing. Each plant only gives a bonus on the actual harvest now.
