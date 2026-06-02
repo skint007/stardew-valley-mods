@@ -14,6 +14,18 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Percentage sliders displaying `.09` instead of `.10` (etc.).** The XP-gain, sell-price,
+  crit-chance, weapon-speed, and curve growth-rate sliders use `interval: 0.01f`. Float
+  rounding meant `10 * 0.01f ≈ 0.0999999…`, which GMCM's default display truncated to
+  `0.09`. Added a `formatValue: v => v.ToString("0.00")` to each affected slider; the
+  stored value was already correct, just the display was off.
+- **GMCM milestone-slot nav stranded users on the mod root.** Each milestone slot page
+  now shows a `← Back to Milestones` link at the top. Workaround for GMCM not exposing
+  a sub-page back stack: backing out of a slot lands on the main page rather than the
+  Milestones index, so picking another slot required clicking back into Milestones.
+
 ## [1.3.1] - 2026-06-01
 
 ### Fixed

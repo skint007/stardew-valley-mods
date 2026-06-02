@@ -95,6 +95,7 @@
   "preset.value.minimalist": "Minimalist",
   "preset.value.empty": "Empty",
 
+  "milestone.back-to-milestones": "← Back to Milestones",
   "milestone.section.slot": "Slot",
   "milestone.level.name": "Required level",
   "milestone.name.name": "Name",

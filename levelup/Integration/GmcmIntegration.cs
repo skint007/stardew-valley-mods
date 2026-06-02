@@ -304,7 +304,8 @@ public class GmcmIntegration
             setValue: v => _getConfig().Curve.GrowthRate = v,
             name: () => T("curve.growth.name"),
             tooltip: () => T("curve.growth.tooltip"),
-            min: 1.00f, max: 1.50f, interval: 0.01f);
+            min: 1.00f, max: 1.50f, interval: 0.01f,
+            formatValue: v => v.ToString("0.00"));
     }
 
     private void AddMilestonesIndexPage(IGenericModConfigMenuApi api)
@@ -338,6 +339,11 @@ public class GmcmIntegration
     {
         // Local helpers to keep registrations tight
         MilestoneConfig M() => _getConfig().Milestones[slotIndex];
+
+        // GMCM's sub-page nav doesn't have a true "back" stack: backing out of a milestone
+        // slot lands on the mod root rather than the Milestones index. Surface an explicit
+        // link at the top so users can jump back to pick another slot.
+        api.AddPageLink(_manifest, "milestones", () => T("milestone.back-to-milestones"));
 
         api.AddSectionTitle(_manifest, () => T("milestone.section.slot"));
         api.AddBoolOption(_manifest,
@@ -380,12 +386,14 @@ public class GmcmIntegration
             getValue: () => M().CritChance, setValue: v => M().CritChance = v,
             name: () => T("milestone.crit.name"),
             tooltip: () => T("milestone.crit.tooltip"),
-            min: 0f, max: 2f, interval: 0.01f);
+            min: 0f, max: 2f, interval: 0.01f,
+            formatValue: v => v.ToString("0.00"));
         api.AddNumberOption(_manifest,
             getValue: () => M().WeaponSpeed, setValue: v => M().WeaponSpeed = v,
             name: () => T("milestone.weapon-speed.name"),
             tooltip: () => T("milestone.weapon-speed.tooltip"),
-            min: 0f, max: 2f, interval: 0.01f);
+            min: 0f, max: 2f, interval: 0.01f,
+            formatValue: v => v.ToString("0.00"));
 
         api.AddSectionTitle(_manifest, () => T("milestone.section.utility"));
         api.AddNumberOption(_manifest,
@@ -407,12 +415,14 @@ public class GmcmIntegration
             getValue: () => M().XpMultiplier, setValue: v => M().XpMultiplier = v,
             name: () => T("milestone.xp-gain.name"),
             tooltip: () => T("milestone.xp-gain.tooltip"),
-            min: 0f, max: 5f, interval: 0.01f);
+            min: 0f, max: 5f, interval: 0.01f,
+            formatValue: v => v.ToString("0.00"));
         api.AddNumberOption(_manifest,
             getValue: () => M().SellPriceBonus, setValue: v => M().SellPriceBonus = v,
             name: () => T("milestone.sell-price.name"),
             tooltip: () => T("milestone.sell-price.tooltip"),
-            min: 0f, max: 5f, interval: 0.01f);
+            min: 0f, max: 5f, interval: 0.01f,
+            formatValue: v => v.ToString("0.00"));
 
         api.AddSectionTitle(_manifest, () => T("milestone.section.gameplay"));
         api.AddNumberOption(_manifest,
