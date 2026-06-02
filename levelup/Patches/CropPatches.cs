@@ -59,10 +59,17 @@ public static class CropPatches
     {
         try
         {
+            // A regrowable crop after its first harvest stays at the last growth phase but
+            // enters a "regrowing" state with fullyGrown=true and dayOfCurrentPhase counting
+            // down. Without the second clause, our prefix would call those still-regrowing
+            // crops "ripe", and every scythe pass over them (the Iridium scythe's wider arc
+            // makes this trivial) would trip the postfix to award bonus drops even though
+            // vanilla harvest did nothing.
             _wasRipeAtHarvest = __instance != null
                 && !__instance.dead.Value
                 && __instance.phaseDays.Count > 0
-                && __instance.currentPhase.Value >= __instance.phaseDays.Count - 1;
+                && __instance.currentPhase.Value >= __instance.phaseDays.Count - 1
+                && !(__instance.fullyGrown.Value && __instance.dayOfCurrentPhase.Value > 0);
         }
         catch
         {

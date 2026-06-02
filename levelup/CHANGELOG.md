@@ -14,6 +14,18 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Bonus crops dropping repeatedly when sweeping a scythe over already-harvested
+  regrowable crops.** The Harmony prefix on `Crop.harvest` flagged the crop as ripe
+  whenever `currentPhase >= phaseDays.Count - 1`, but for regrowable crops (summer
+  squash, tomato, blueberry, etc.) the current phase stays at its last index even
+  while the plant is regrowing (`fullyGrown=true`, `dayOfCurrentPhase > 0`). Vanilla
+  correctly returned `false` from those calls, but the postfix's gate is "result OR
+  ripe-at-prefix" — the bad ripeness flag let the bonus award fire anyway. Most
+  visible with the Iridium scythe (wider arc means the same already-regrowing tile
+  gets re-hit on every swing). Prefix now also excludes the regrowing state.
+
 ## [1.3.2] - 2026-06-01
 
 ### Fixed
