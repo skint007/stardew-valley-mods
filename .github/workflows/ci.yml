@@ -36,6 +36,7 @@ jobs:
     outputs:
       levelup: ${{ steps.filter.outputs.levelup }}
       betterfertilizer: ${{ steps.filter.outputs.betterfertilizer }}
+      trainup: ${{ steps.filter.outputs.trainup }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -48,6 +49,8 @@ jobs:
               - 'levelup/**'
             betterfertilizer:
               - 'BetterFertilizer/**'
+            trainup:
+              - 'trainup/**'
 
   levelup:
     needs: changes
@@ -71,3 +74,14 @@ jobs:
       name: Better Fertilizer
       dir: BetterFertilizer
       tag_prefix: betterfertilizer
+
+  trainup:
+    needs: changes
+    if: ${{ needs.changes.outputs.trainup == 'true' }}
+    uses: ./.github/workflows/build-mod.yml
+    with:
+      name: Train Up
+      dir: trainup
+      tag_prefix: trainup
+      # No nexus_file_group_id: Train Up isn't on Nexus yet, so CI builds and publishes a
+      # GitHub Release on version bump but skips the Nexus upload. Add the ID later to enable.
