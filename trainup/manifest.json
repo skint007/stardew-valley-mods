@@ -1,0 +1,21 @@
+{
+  "Name": "Train Up",
+  "Author": "skint007",
+  "Version": "0.1.0",
+  "Description": "Train custom Defense, Vitality, and Stamina skills (shown on the vanilla skill page with their own professions) by taking hits, losing HP, and spending energy — plus a craftable training dummy you whack for Combat XP.",
+  "UniqueID": "skint007.TrainUp",
+  "EntryDll": "TrainUp.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SpaceCore",
+      "MinimumVersion": "1.28.0",
+      "IsRequired": true
+    },
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ]
+}
