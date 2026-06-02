@@ -4,7 +4,7 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
-## Unreleased
+## 1.3.2
 
 Fixed
 - The "+XP gain", "+Sell price", "+Crit chance", "+Weapon speed", and curve "Growth rate" sliders could show ".09" when you'd snapped them to ".10" (and similar values). The stored value was already correct; the display is now too.
