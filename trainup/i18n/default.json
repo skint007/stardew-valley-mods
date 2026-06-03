@@ -28,6 +28,12 @@
   "config.vitality-cap.name": "Vitality daily cap",
   "config.stamina-cap.name": "Stamina daily cap",
 
+  "config.section.perlevel": "Per-level bonuses",
+  "config.perlevel.paragraph": "Passive stat bonus each skill grants per level, on top of professions. Set to 0 to disable.",
+  "config.vitality-perlevel.name": "Max HP per Vitality level",
+  "config.stamina-perlevel.name": "Max energy per Stamina level",
+  "config.defense-perlevel.name": "Defense per Defense level",
+
   "config.section.dummy": "Training dummy",
   "config.dummy-enabled.name": "Dummy grants Combat XP",
   "config.dummy-enabled.tooltip": "When on, hitting the training dummy grants vanilla Combat XP.",
@@ -38,6 +44,8 @@
 
   "skill.defense.name": "Defense",
   "skill.defense.description": "Trained by taking hits. Toughen up to shrug off damage or learn to dodge it.",
+  "skill.defense.perlevel.gain": "+{{amount}} defense",
+  "skill.defense.perlevel.total": "Defense bonus: +{{total}}",
   "skill.defense.profession.tough.name": "Tough",
   "skill.defense.profession.tough.desc": "+1 Defense.",
   "skill.defense.profession.evasive.name": "Evasive",
@@ -53,6 +61,8 @@
 
   "skill.vitality.name": "Vitality",
   "skill.vitality.description": "Trained by losing health. Build a bigger health pool or recover faster.",
+  "skill.vitality.perlevel.gain": "+{{amount}} max health",
+  "skill.vitality.perlevel.total": "Max health bonus: +{{total}}",
   "skill.vitality.profession.hardy.name": "Hardy",
   "skill.vitality.profession.hardy.desc": "+15 max HP.",
   "skill.vitality.profession.recovery.name": "Recovery",
@@ -68,6 +78,8 @@
 
   "skill.stamina.name": "Stamina",
   "skill.stamina.description": "Trained by spending energy. Carry more stamina or use it more efficiently.",
+  "skill.stamina.perlevel.gain": "+{{amount}} max energy",
+  "skill.stamina.perlevel.total": "Max energy bonus: +{{total}}",
   "skill.stamina.profession.energetic.name": "Energetic",
   "skill.stamina.profession.energetic.desc": "+25 max energy.",
   "skill.stamina.profession.efficient.name": "Efficient",

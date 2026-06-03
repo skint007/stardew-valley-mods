@@ -17,6 +17,8 @@ public class DefenseSkill : TrainUpSkill
     public readonly GenericProfession Acrobat;
     public readonly GenericProfession Counter;
 
+    public override int PerLevelBonus => ModEntry.Instance.Config.DefensePerLevel;
+
     public DefenseSkill()
         : base(SkillId, "defense", "assets/defense-16.png", "assets/defense-10.png", new Color(120, 170, 255))
     {

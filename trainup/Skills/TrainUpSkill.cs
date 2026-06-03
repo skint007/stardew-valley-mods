@@ -32,9 +32,21 @@ public abstract class TrainUpSkill : SpaceCore.Skills.Skill
     /// <summary>Translation helper scoped to this skill: looks up "skill.&lt;key&gt;.&lt;suffix&gt;".</summary>
     protected string T(string suffix) => ModEntry.Instance.Helper.Translation.Get($"skill.{Key}.{suffix}");
 
+    /// <summary>As <see cref="T(string)"/> but with token replacements (e.g. <c>{{amount}}</c>).</summary>
+    protected string T(string suffix, object tokens) => ModEntry.Instance.Helper.Translation.Get($"skill.{Key}.{suffix}", tokens);
+
     public override string GetName() => T("name");
 
-    public override string GetSkillPageHoverText(int level) => T("description");
+    /// <summary>The passive stat bonus this skill grants per level (from config; 0 disables).</summary>
+    public abstract int PerLevelBonus { get; }
+
+    public override string GetSkillPageHoverText(int level)
+    {
+        string text = T("description");
+        if (PerLevelBonus > 0)
+            text += "\n" + T("perlevel.total", new { total = PerLevelBonus * level });
+        return text;
+    }
 
     /// <summary>
     /// Build a GenericProfession whose name/description read from
@@ -69,6 +81,12 @@ public abstract class TrainUpSkill : SpaceCore.Skills.Skill
         this.ProfessionsForLevels.Add(new ProfessionPair(10, b1, b2, l5b));
     }
 
-    /// <summary>Shown as the per-level perk line on the skills page / level-up menu.</summary>
-    public override List<string> GetExtraLevelUpInfo(int level) => new();
+    /// <summary>The line(s) shown on the level-up screen for the level just reached.</summary>
+    public override List<string> GetExtraLevelUpInfo(int level)
+    {
+        var lines = new List<string>();
+        if (PerLevelBonus > 0)
+            lines.Add(T("perlevel.gain", new { amount = PerLevelBonus }));
+        return lines;
+    }
 }

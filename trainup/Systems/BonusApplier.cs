@@ -27,8 +27,8 @@ public class BonusApplier
     private float _hpAccumulator;
     private float _staminaAccumulator;
 
-    /// <summary>Player profession count last time we applied, to detect a new pick cheaply.</summary>
-    private int _lastProfessionCount = -1;
+    /// <summary>Snapshot of professions + skill levels last applied, to detect changes cheaply.</summary>
+    private string _lastSignature = "";
 
     public BonusApplier(ModConfig config, SkillRegistry skills, IMonitor monitor)
     {
@@ -39,32 +39,49 @@ public class BonusApplier
 
     private bool Has(GenericProfession p) => p.IsActiveFor(Game1.player);
 
-    /// <summary>Strip any prior bonuses, then (re)apply the ones the player's professions grant.</summary>
+    private static int Level(string skillId) =>
+        Context.IsWorldReady ? SpaceCore.Skills.GetSkillLevel(Game1.player, skillId) : 0;
+
+    /// <summary>A cheap signature of what affects the applied bonuses (profession picks + levels).</summary>
+    private static string Signature() =>
+        $"{Game1.player.professions.Count}:{Level(DefenseSkill.SkillId)}:{Level(VitalitySkill.SkillId)}:{Level(StaminaSkill.SkillId)}";
+
+    /// <summary>Strip any prior bonuses, then (re)apply per-level growth plus profession perks.</summary>
     public void Apply()
     {
         if (!Context.IsWorldReady) return;
         Strip();
 
-        if (!_config.Enabled || !_config.EnableProfessionPerks) return;
+        if (!_config.Enabled) return;
 
         var player = Game1.player;
+        bool perks = _config.EnableProfessionPerks;
 
-        // Max HP: Hardy (+15), Juggernaut adds +25 more.
-        int hp = 0;
-        if (Has(_skills.Vitality.Hardy)) hp += 15;
-        if (Has(_skills.Vitality.Juggernaut)) hp += 25;
+        // Max HP: per-level growth, plus Hardy (+15) / Juggernaut (+25 more).
+        int hp = Level(VitalitySkill.SkillId) * _config.VitalityHpPerLevel;
+        if (perks)
+        {
+            if (Has(_skills.Vitality.Hardy)) hp += 15;
+            if (Has(_skills.Vitality.Juggernaut)) hp += 25;
+        }
         if (hp > 0) { player.maxHealth += hp; _appliedHp = hp; }
 
-        // Max energy: Energetic (+25), Marathoner adds +50 more.
-        int stam = 0;
-        if (Has(_skills.Stamina.Energetic)) stam += 25;
-        if (Has(_skills.Stamina.Marathoner)) stam += 50;
+        // Max energy: per-level growth, plus Energetic (+25) / Marathoner (+50 more).
+        int stam = Level(StaminaSkill.SkillId) * _config.StaminaEnergyPerLevel;
+        if (perks)
+        {
+            if (Has(_skills.Stamina.Energetic)) stam += 25;
+            if (Has(_skills.Stamina.Marathoner)) stam += 50;
+        }
         if (stam > 0) { player.maxStamina.Value += stam; _appliedStamina = stam; }
 
-        // Defense: Tough (+1), Ironhide adds +2 more. Applied as a refreshing buff.
-        int def = 0;
-        if (Has(_skills.Defense.Tough)) def += 1;
-        if (Has(_skills.Defense.Ironhide)) def += 2;
+        // Defense: per-level growth, plus Tough (+1) / Ironhide (+2 more). Applied as a buff.
+        int def = Level(DefenseSkill.SkillId) * _config.DefensePerLevel;
+        if (perks)
+        {
+            if (Has(_skills.Defense.Tough)) def += 1;
+            if (Has(_skills.Defense.Ironhide)) def += 2;
+        }
         if (def > 0)
         {
             player.buffs.Remove(DefenseBuffId);
@@ -81,7 +98,7 @@ public class BonusApplier
             _appliedDefense = def;
         }
 
-        _lastProfessionCount = player.professions.Count;
+        _lastSignature = Signature();
     }
 
     /// <summary>Remove all applied bonuses, restoring vanilla stat values.</summary>
@@ -109,11 +126,11 @@ public class BonusApplier
         }
     }
 
-    /// <summary>Re-apply if the player picked a new profession since the last apply.</summary>
-    public void RefreshIfProfessionsChanged()
+    /// <summary>Re-apply if the player gained a level or picked a new profession since last apply.</summary>
+    public void RefreshIfChanged()
     {
         if (!Context.IsWorldReady) return;
-        if (Game1.player.professions.Count != _lastProfessionCount)
+        if (Signature() != _lastSignature)
             Apply();
     }
 

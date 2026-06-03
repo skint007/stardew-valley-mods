@@ -17,6 +17,8 @@ public class StaminaSkill : TrainUpSkill
     public readonly GenericProfession Conservationist;
     public readonly GenericProfession Caffeinated;
 
+    public override int PerLevelBonus => ModEntry.Instance.Config.StaminaEnergyPerLevel;
+
     public StaminaSkill()
         : base(SkillId, "stamina", "assets/stamina-16.png", "assets/stamina-10.png", new Color(245, 205, 80))
     {
