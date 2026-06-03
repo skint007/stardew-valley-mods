@@ -17,6 +17,8 @@ public class VitalitySkill : TrainUpSkill
     public readonly GenericProfession Medic;
     public readonly GenericProfession SecondWind;
 
+    public override int PerLevelBonus => ModEntry.Instance.Config.VitalityHpPerLevel;
+
     public VitalitySkill()
         : base(SkillId, "vitality", "assets/vitality-16.png", "assets/vitality-10.png", new Color(235, 90, 90))
     {

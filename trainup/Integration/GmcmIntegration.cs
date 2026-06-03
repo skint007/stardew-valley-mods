@@ -108,6 +108,25 @@ public class GmcmIntegration
             name: () => T("config.stamina-cap.name"),
             min: 0, max: 10000, interval: 50);
 
+        // ── Per-level bonuses ───────────────────────────────────────────────
+        api.AddSectionTitle(_manifest, () => T("config.section.perlevel"));
+        api.AddParagraph(_manifest, () => T("config.perlevel.paragraph"));
+        api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().VitalityHpPerLevel,
+            setValue: v => _getConfig().VitalityHpPerLevel = v,
+            name: () => T("config.vitality-perlevel.name"),
+            min: 0, max: 25, interval: 1);
+        api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().StaminaEnergyPerLevel,
+            setValue: v => _getConfig().StaminaEnergyPerLevel = v,
+            name: () => T("config.stamina-perlevel.name"),
+            min: 0, max: 50, interval: 1);
+        api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().DefensePerLevel,
+            setValue: v => _getConfig().DefensePerLevel = v,
+            name: () => T("config.defense-perlevel.name"),
+            min: 0, max: 10, interval: 1);
+
         // ── Training dummy ──────────────────────────────────────────────────
         api.AddSectionTitle(_manifest, () => T("config.section.dummy"));
         api.AddBoolOption(_manifest,

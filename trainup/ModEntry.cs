@@ -123,7 +123,7 @@ public class ModEntry : Mod
     private void OnOneSecondUpdate(object? sender, OneSecondUpdateTickedEventArgs e)
     {
         _vitals.Tick();
-        _bonuses.RefreshIfProfessionsChanged();
+        _bonuses.RefreshIfChanged();
         _bonuses.TickRegen();
     }
 }

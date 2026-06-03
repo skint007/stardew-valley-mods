@@ -44,6 +44,18 @@ public class ModConfig
     /// <summary>Max Combat XP per day from the dummy (anti-grind). 0 disables the cap.</summary>
     public int DummyDailyXpCap { get; set; } = 500;
 
+    // ── Per-level passive bonuses ───────────────────────────────────────────────
+    // Each skill grants a small passive stat bonus per level (on top of professions),
+    // so leveling is rewarding by itself. Shown on the level-up screen. 0 disables.
+    /// <summary>Max HP gained per Vitality level.</summary>
+    public int VitalityHpPerLevel { get; set; } = 2;
+
+    /// <summary>Max energy gained per Stamina level.</summary>
+    public int StaminaEnergyPerLevel { get; set; } = 4;
+
+    /// <summary>Defense gained per Defense level.</summary>
+    public int DefensePerLevel { get; set; } = 1;
+
     // ── Profession perks ─────────────────────────────────────────────────────────
     /// <summary>Apply the stat/gameplay perks granted by chosen professions.</summary>
     public bool EnableProfessionPerks { get; set; } = true;
@@ -66,6 +78,9 @@ public class ModConfig
         DummyEnabled = other.DummyEnabled;
         DummyCombatXpPerHit = other.DummyCombatXpPerHit;
         DummyDailyXpCap = other.DummyDailyXpCap;
+        VitalityHpPerLevel = other.VitalityHpPerLevel;
+        StaminaEnergyPerLevel = other.StaminaEnergyPerLevel;
+        DefensePerLevel = other.DefensePerLevel;
         EnableProfessionPerks = other.EnableProfessionPerks;
     }
 }

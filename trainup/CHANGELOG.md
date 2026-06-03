@@ -23,6 +23,9 @@ the entry you add below.
   - **Defense** — trained by taking hits; XP scales with damage actually taken (after armor).
   - **Vitality** — trained by losing HP from any source.
   - **Stamina** — trained by spending energy.
+- **Per-level passive bonuses** (configurable): each level grants a small stat gain — Vitality
+  +max HP, Stamina +max energy, Defense +defense — shown on the level-up screen and as a running
+  total on the skill-page hover, applied save-safely alongside professions.
 - **Profession perks** for all three skills: defense/HP/energy boosts (save-safe buffs that are
   stripped before saving and reapplied after), HP/energy regen, dodge + counter + retaliate,
   low-HP damage scaling, healing/energy-from-food bonuses, and tool-energy savings.
