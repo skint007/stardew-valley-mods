@@ -131,17 +131,26 @@ public class ModEntry : Mod
 
     private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
     {
-        if (_config.OpenMenuHotkey == SButton.None) return;
-        if (e.Button != _config.OpenMenuHotkey) return;
-        if (_gmcm == null) return;
-
-        // Only open from "free" contexts: no menu already active (the activeClickableMenu
-        // null check also covers text-entry / chat-box overlays) and no event/cutscene.
+        // Only run from "free" contexts: no menu already active (the activeClickableMenu null
+        // check also covers text-entry / chat-box overlays) and no event/cutscene.
         if (Game1.activeClickableMenu != null) return;
         if (Game1.eventUp || Game1.farmEvent != null) return;
 
-        _gmcm.OpenMenu();
-        Helper.Input.Suppress(e.Button);
+        if (_config.OpenMenuHotkey != SButton.None && e.Button == _config.OpenMenuHotkey)
+        {
+            if (_gmcm == null) return;
+            _gmcm.OpenMenu();
+            Helper.Input.Suppress(e.Button);
+            return;
+        }
+
+        if (_config.ShowXpBarHotkey != SButton.None && e.Button == _config.ShowXpBarHotkey)
+        {
+            _config.ShowXpBar = !_config.ShowXpBar;
+            Helper.WriteConfig(_config);
+            Helper.Input.Suppress(e.Button);
+            return;
+        }
     }
 
     private void OnReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)

@@ -122,6 +122,13 @@ public class GmcmIntegration
             tooltip: () => T("config.fade-vertical-bar.tooltip"));
 
         api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().VerticalBarRightOffset,
+            setValue: v => _getConfig().VerticalBarRightOffset = v,
+            name: () => T("config.vertical-bar-offset.name"),
+            tooltip: () => T("config.vertical-bar-offset.tooltip"),
+            min: -160, max: 400, interval: 8);
+
+        api.AddNumberOption(_manifest,
             getValue: () => _getConfig().XpBarScale,
             setValue: v => _getConfig().XpBarScale = v,
             name: () => T("config.xp-bar-scale.name"),
@@ -149,6 +156,12 @@ public class GmcmIntegration
             setValue: v => _getConfig().OpenMenuHotkey = v,
             name: () => T("config.open-menu-hotkey.name"),
             tooltip: () => T("config.open-menu-hotkey.tooltip"));
+
+        api.AddKeybind(_manifest,
+            getValue: () => _getConfig().ShowXpBarHotkey,
+            setValue: v => _getConfig().ShowXpBarHotkey = v,
+            name: () => T("config.show-xp-bar-hotkey.name"),
+            tooltip: () => T("config.show-xp-bar-hotkey.tooltip"));
 
         api.AddPageLink(_manifest, "xp-sources", () => T("link.xp-sources"));
         api.AddPageLink(_manifest, "curve", () => T("link.curve"));

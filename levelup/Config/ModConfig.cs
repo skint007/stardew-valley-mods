@@ -40,6 +40,21 @@ public class ModConfig
     /// </summary>
     public float XpBarScale { get; set; } = 1.0f;
 
+    /// <summary>
+    /// Pixels to shift the vertical XP bar further left (positive) or right (negative) from
+    /// its default anchor. Used to clear vertical bars added by other mods (mana, hunger,
+    /// thirst, etc.). Auto-detection isn't viable since there's no shared HUD registry, so
+    /// users set a manual offset that works against any other mod regardless of release date.
+    /// </summary>
+    public int VerticalBarRightOffset { get; set; } = 0;
+
+    /// <summary>
+    /// Optional hotkey that toggles the XP bar HUD on/off in-place. Mirrors the
+    /// "Show XP bar" config option but without opening the menu.
+    /// <see cref="SButton.None"/> disables the shortcut (default).
+    /// </summary>
+    public SButton ShowXpBarHotkey { get; set; } = SButton.None;
+
     /// <summary>Show a HUD message when the player levels up.</summary>
     public bool ShowLevelUpNotification { get; set; } = true;
 

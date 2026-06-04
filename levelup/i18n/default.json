@@ -34,6 +34,10 @@
   "config.debug-logging.tooltip": "Verbose console output. Useful for troubleshooting.",
   "config.open-menu-hotkey.name": "Open menu hotkey",
   "config.open-menu-hotkey.tooltip": "Press this key in-game to jump straight to this options menu. Leave unset to disable.",
+  "config.show-xp-bar-hotkey.name": "Toggle XP bar hotkey",
+  "config.show-xp-bar-hotkey.tooltip": "Press this key in-game to hide or show the XP bar without opening the menu. Leave unset to disable.",
+  "config.vertical-bar-offset.name": "Vertical bar left offset",
+  "config.vertical-bar-offset.tooltip": "Pixels to shift the vertical XP bar further left (positive) or right (negative) from its default anchor. Use this to clear vertical bars added by other mods (mana, hunger, thirst, etc.).",
 
   "link.xp-sources": "→ XP Sources",
   "link.curve": "→ XP Curve",

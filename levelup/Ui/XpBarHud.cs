@@ -218,7 +218,9 @@ public class XpBarHud
 
         int barBottomY = vh - 16;
         int barTopY    = barBottomY - VTotalHeight;
-        int barX       = vw - VRightInset;
+        // Apply the user-configurable offset so players can shift the bar clear of other mods'
+        // vertical bars (Magic mana, Hunger, Thirst, etc.). Positive = further left.
+        int barX       = vw - (VRightInset + _config.VerticalBarRightOffset);
 
         var hitRect = new Rectangle(barX, barTopY, VBarWidth, VTotalHeight);
         bool hovered = hitRect.Contains(Game1.getMousePosition());

@@ -14,6 +14,19 @@ the entry you add below.
 
 ## [Unreleased]
 
+### Added
+
+- **Toggle XP bar hotkey.** New `ShowXpBarHotkey` config (unset by default) flips
+  `ShowXpBar` on press, so the player can hide/show the bar without opening GMCM.
+  Mirrors the existing `OpenMenuHotkey` wiring in `ModEntry.OnButtonPressed` and
+  persists the toggle via `Helper.WriteConfig`.
+- **Configurable vertical-bar position.** New `VerticalBarRightOffset` (int, default
+  0) added on top of the existing `VRightInset = 168` in `XpBarHud.DrawVertical`.
+  Positive values shift the bar further left so users can clear vertical bars added
+  by other mods (Magic mana, Hunger, Thirst, etc.). Auto-detection of other mods'
+  HUD elements isn't viable (no shared registry), so this is a manual knob that
+  works against any other bar mod regardless of release date.
+
 ## [1.3.3] - 2026-06-01
 
 ### Fixed
