@@ -4,6 +4,14 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
+## 1.3.5
+
+New
+- The mod's version number now shows at the top of the in-game settings page, so it's easy to see what version you have installed without leaving the game.
+
+Fixed
+- Fixed Stardrops and the Combat Mastery cave reward (+25 max HP) being wiped if you ate them after installing the mod. Affected characters will see them restored on the next day load.
+
 ## 1.3.4
 
 New

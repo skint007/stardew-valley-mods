@@ -14,6 +14,29 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.3.5] - 2026-06-13
+
+### Added
+
+- **Mod version shown at the top of the GMCM page.** The current version is now
+  pulled from `manifest.json` and displayed as a paragraph above the General
+  section, so players can confirm at a glance which version they're running
+  without leaving the in-game menu.
+
+### Fixed
+
+- **Stardrops and the Combat Mastery cave reward stopped working after installing
+  the mod.** The mod caches a vanilla max-HP / max-energy baseline the first time
+  it sees a save, then sets `maxHealth` / `maxStamina` to `baseline + bonus` on
+  every level-up, day start, and save. Any vanilla-source bump that happened
+  *after* the baseline was captured (a Stardrop's +34 EN, the Combat Mastery
+  cave's +25 HP, or any other mod that increases the maxes) wasn't in the
+  baseline, so it got wiped on the next apply. The baseline is now ratcheted
+  upward whenever the observed `maxHealth` / `MaxStamina` exceeds `baseline +
+  lastAppliedBonus`, absorbing the post-install increase. Ratchets up only, so a
+  "lose max HP" effect doesn't permanently lower the baseline. Existing
+  characters who lost Stardrops will see them restored on the next day load.
+
 ## [1.3.4] - 2026-06-01
 
 ### Added
@@ -236,7 +259,8 @@ First complete release.
 - Generic Mod Config Menu integration for all settings (soft dependency).
 - Console commands for inspecting/adjusting progress.
 
-[Unreleased]: https://example.com/compare/v1.3.4...HEAD
+[Unreleased]: https://example.com/compare/v1.3.5...HEAD
+[1.3.5]: https://example.com/compare/v1.3.4...v1.3.5
 [1.3.4]: https://example.com/compare/v1.3.3...v1.3.4
 [1.3.3]: https://example.com/compare/v1.3.2...v1.3.3
 [1.3.2]: https://example.com/compare/v1.3.1...v1.3.2

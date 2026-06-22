@@ -103,6 +103,10 @@ public class BonusApplier
         var player = Game1.player;
         if (player == null) return;
 
+        // Absorb any vanilla-side max HP / energy increases (Stardrops, Combat Mastery cave)
+        // that happened since the last apply, before we reset to baseline and wipe them.
+        AbsorbVanillaIncreases(player);
+
         // Reset to baseline first to prevent compounding across reapplies.
         ResetToBaseline(player);
 
@@ -129,6 +133,11 @@ public class BonusApplier
             player.maxHealth = _saveData.Current.BaselineMaxHp + bonus.MaxHp;
         if (bonus.MaxEnergy > 0 && _saveData.Current.BaselineMaxEnergy > 0)
             player.maxStamina.Value = _saveData.Current.BaselineMaxEnergy + bonus.MaxEnergy;
+
+        // Remember what we just applied, so the next AbsorbVanillaIncreases can tell our
+        // own bonus apart from any subsequent vanilla bump.
+        _saveData.Current.LastAppliedMaxHpBonus = bonus.MaxHp;
+        _saveData.Current.LastAppliedMaxEnergyBonus = bonus.MaxEnergy;
 
         // ── Combat / utility: single persistent buff ───────────────────────────
         ApplyMilestoneBuff(player, bonus);
@@ -256,6 +265,10 @@ public class BonusApplier
         if (!Context.IsWorldReady) return;
         var player = Game1.player;
         if (player == null) return;
+        // Absorb pending vanilla bumps before zeroing them out via ResetToBaseline. Critical
+        // for the day-end save path: vanilla serializes maxStamina after we Strip, so a
+        // Stardrop eaten today is otherwise lost forever.
+        AbsorbVanillaIncreases(player);
         ResetToBaseline(player);
         RemoveBuff(player);
     }
@@ -266,5 +279,45 @@ public class BonusApplier
             player.maxHealth = _saveData.Current.BaselineMaxHp;
         if (_saveData.Current.BaselineMaxEnergy > 0)
             player.maxStamina.Value = _saveData.Current.BaselineMaxEnergy;
+    }
+
+    /// <summary>
+    /// Detect post-baseline vanilla increases to <see cref="Farmer.maxHealth"/> /
+    /// <see cref="Farmer.MaxStamina"/> (Stardrops add +34 EN, the Combat Mastery cave
+    /// reward adds +25 HP, other mods may also bump these) and ratchet the stored
+    /// baseline upward so the next ResetToBaseline / ApplyAll doesn't wipe them.
+    ///
+    /// Only ratchets up, never down: a vanilla "lose max HP" effect should not bake a
+    /// permanent decrease into our baseline.
+    /// </summary>
+    private void AbsorbVanillaIncreases(Farmer player)
+    {
+        if (_saveData.Current.BaselineMaxHp > 0)
+        {
+            int observed = player.maxHealth;
+            int expected = _saveData.Current.BaselineMaxHp + _saveData.Current.LastAppliedMaxHpBonus;
+            int delta = observed - expected;
+            if (delta > 0)
+            {
+                _saveData.Current.BaselineMaxHp += delta;
+                _monitor.Log(
+                    $"Absorbed +{delta} max HP into baseline (now {_saveData.Current.BaselineMaxHp}).",
+                    LogLevel.Info);
+            }
+        }
+
+        if (_saveData.Current.BaselineMaxEnergy > 0)
+        {
+            int observed = (int)player.MaxStamina;
+            int expected = _saveData.Current.BaselineMaxEnergy + _saveData.Current.LastAppliedMaxEnergyBonus;
+            int delta = observed - expected;
+            if (delta > 0)
+            {
+                _saveData.Current.BaselineMaxEnergy += delta;
+                _monitor.Log(
+                    $"Absorbed +{delta} max energy into baseline (now {_saveData.Current.BaselineMaxEnergy}).",
+                    LogLevel.Info);
+            }
+        }
     }
 }

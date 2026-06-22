@@ -88,6 +88,8 @@ public class GmcmIntegration
             save: _onSave);
 
         // ── Main page ───────────────────────────────────────────────────────
+        api.AddParagraph(_manifest, () => T("config.version", new { version = _manifest.Version }));
+
         api.AddSectionTitle(_manifest, () => T("config.section.general"));
 
         api.AddBoolOption(_manifest,

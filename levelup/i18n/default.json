@@ -15,6 +15,8 @@
   "hud.tooltip.max": "Level {{level}} (MAX)\n{{total}} total XP",
   "hud.tooltip.progress": "Level {{level}}\n{{into}} / {{needed}} XP\nTotal: {{total}}",
 
+  "config.version": "Version: {{version}}",
+
   "config.section.general": "General",
   "config.enabled.name": "Enable mod",
   "config.enabled.tooltip": "Master switch. When off, no XP is awarded and no bonuses are applied.",

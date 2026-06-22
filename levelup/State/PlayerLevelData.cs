@@ -28,6 +28,20 @@ public class PlayerLevelData
     public int BaselineMaxEnergy { get; set; } = 0;
 
     /// <summary>
+    /// Last max-HP bonus we applied on top of <see cref="BaselineMaxHp"/>. Used to detect
+    /// vanilla-side increases (Stardrops, Combat Mastery cave reward, etc.) that happen
+    /// after the baseline was first captured, so we can ratchet the baseline upward and
+    /// avoid wiping them when we reapply.
+    /// </summary>
+    public int LastAppliedMaxHpBonus { get; set; } = 0;
+
+    /// <summary>
+    /// Last max-energy bonus we applied on top of <see cref="BaselineMaxEnergy"/>. See
+    /// <see cref="LastAppliedMaxHpBonus"/>.
+    /// </summary>
+    public int LastAppliedMaxEnergyBonus { get; set; } = 0;
+
+    /// <summary>
     /// Set of location names already visited (for the "new area" XP source).
     /// We mirror Stardew 1.6's locationsVisited but maintain our own set to
     /// avoid awarding XP for areas visited before the mod was installed.
