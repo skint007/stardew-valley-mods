@@ -65,7 +65,7 @@ public static class FarmerPatches
             // almost certainly another mod bulk-granting skill XP, and at SkillXpRate >= 1.0
             // that maps straight into meta XP and can rocket the player several levels at
             // once. Skill index in the source label helps identify the culprit (0=farming,
-            // 1=fishing, 2=foraging, 3=mining, 4=combat, 5+ = SpaceCore custom skills).
+            // 1=fishing, 2=foraging, 3=mining, 4=combat, 5=luck, 6+ = SpaceCore custom skills).
             if (original >= 1000)
                 _monitor.Log(
                     $"Large skill-XP grant: skill={which}, amount={original}. Another mod is " +
@@ -80,11 +80,18 @@ public static class FarmerPatches
                 if (bonus > 0) howMuch += bonus;
             }
 
-            // 2. "Scale with skill XP" meta XP, based on the original vanilla amount.
+            // 2. "Scale with skill XP" meta XP, based on the original vanilla amount, clamped
+            // to SkillXpMaxPerCall so a runaway upstream grant (e.g. a Luck Skill mod summing
+            // every rock an explosion-on-kill ring destroys in the Quarry) can't dump millions
+            // of meta XP at once. The upstream skill still gets its full grant; only what we
+            // absorb into meta XP is capped.
             var src = _config.XpSources;
             if (src.SkillXpEnabled && src.SkillXpRate > 0f)
             {
-                long meta = (long)Math.Floor(original * src.SkillXpRate);
+                int eligible = src.SkillXpMaxPerCall > 0
+                    ? Math.Min(original, src.SkillXpMaxPerCall)
+                    : original;
+                long meta = (long)Math.Floor(eligible * src.SkillXpRate);
                 if (meta > 0)
                 {
                     int oldLevel = _saveData.Current.Level;

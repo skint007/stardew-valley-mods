@@ -8,7 +8,7 @@ lives in its own folder with its own solution and can be built independently.
 | Mod | Version | Description |
 | --- | --- | --- |
 | [Better Fertilizer](BetterFertilizer/README.md) | 1.2.0 | Configurable fertilizer overhaul: multi-fertilizer stacking, fertilize anytime, keep fertilizer across seasons, tunable potencies/craft amounts, plus a Tree Fertilizer that works on fruit trees. |
-| [Level Up](levelup/README.md) | 1.3.5 | A meta player-level system earned from in-world actions (kills, days, quests), with milestone-based stat bonuses fully configurable via GMCM. |
+| [Level Up](levelup/README.md) | 1.3.6 | A meta player-level system earned from in-world actions (kills, days, quests), with milestone-based stat bonuses fully configurable via GMCM. |
 | [Train Up](trainup/README.md) | 0.1.0 | Train custom Defense, Vitality, and Stamina skills (shown on the vanilla skill page with their own professions) by taking hits, losing HP, and spending energy, plus a craftable training dummy you whack for Combat XP. Built on [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348). |
 
 These mods optionally integrate with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098)

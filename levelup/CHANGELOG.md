@@ -14,6 +14,25 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.3.6] - 2026-06-13
+
+### Added
+
+- **`SkillXpMaxPerCall` config (default 5000).** Hard cap on how much vanilla
+  skill XP we absorb from a single `Farmer.gainExperience` call before the
+  Scale-with-Skill-XP rate is applied. Defends against other mods that bulk-grant
+  skill XP for many actions at once (e.g. a Luck Skill mod summing every rock
+  an explosion-on-kill ring destroys in the Quarry — a single grant of ~1.5M XP
+  was reported). The upstream skill still receives its full grant; only what we
+  pull into meta XP is clamped. Set `0` to disable. Surfaced in GMCM under the
+  Scale-with-Skill-XP section.
+
+### Fixed
+
+- **Misleading skill-index comment in `FarmerPatches`.** The large-grant warning
+  log labelled skill index 5 as "SpaceCore custom" — it's actually vanilla Luck.
+  SpaceCore custom skills begin at index 6. Comment corrected; no behaviour change.
+
 ## [1.3.5] - 2026-06-13
 
 ### Added
@@ -259,7 +278,8 @@ First complete release.
 - Generic Mod Config Menu integration for all settings (soft dependency).
 - Console commands for inspecting/adjusting progress.
 
-[Unreleased]: https://example.com/compare/v1.3.5...HEAD
+[Unreleased]: https://example.com/compare/v1.3.6...HEAD
+[1.3.6]: https://example.com/compare/v1.3.5...v1.3.6
 [1.3.5]: https://example.com/compare/v1.3.4...v1.3.5
 [1.3.4]: https://example.com/compare/v1.3.3...v1.3.4
 [1.3.3]: https://example.com/compare/v1.3.2...v1.3.3

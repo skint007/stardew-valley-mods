@@ -73,6 +73,8 @@
   "xp.skill-xp.tooltip": "Earn meta XP as a fraction of all vanilla skill XP (farming, fishing, chopping, mining, foraging, combat).",
   "xp.skill-xp-rate.name": "Skill XP rate",
   "xp.skill-xp-rate.tooltip": "Fraction of earned skill XP converted to meta XP. 1.0 = 100%, 0.5 = 50%.",
+  "xp.skill-xp-max-per-call.name": "Max skill XP credited per action",
+  "xp.skill-xp-max-per-call.tooltip": "Hard cap on how much vanilla skill XP we credit from one grant before multiplying by the rate above. Defends against other mods that bulk-grant skill XP for many actions in one call (e.g. an explosion-on-kill ring summing every rock destroyed in the Quarry, which can produce a single 1M+ XP grant). Set 0 to disable the cap. The upstream skill still gets its full grant; only what you absorb into meta XP is capped.",
 
   "curve.paragraph": "XP needed per level grows as: base × growth^(level-1)",
   "curve.preset.name": "Preset",

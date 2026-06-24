@@ -4,6 +4,11 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
+## 1.3.6
+
+Fixed
+- Fixed a runaway XP spike that could happen when an explosion-on-kill ring (or similar) destroyed many rocks at once. The Quarry was the worst case (a single explosion could grant millions of meta XP through the "Scale with skill XP" source). There's now a per-call cap (default 5,000) on how much skill XP is absorbed at once. The skill itself still receives the full amount; only what feeds the mod's meta XP is capped. The cap is configurable from the settings menu, and setting it to 0 turns it off.
+
 ## 1.3.5
 
 New

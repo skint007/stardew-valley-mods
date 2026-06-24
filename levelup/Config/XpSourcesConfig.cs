@@ -72,4 +72,17 @@ public class XpSourcesConfig
     /// XP rounds away to nothing (at 0.1, any task under 10 XP gave zero).
     /// </summary>
     public float SkillXpRate { get; set; } = 1.0f;
+
+    /// <summary>
+    /// Hard cap on how much *vanilla* skill XP we credit from one <c>Farmer.gainExperience</c>
+    /// call before multiplying by <see cref="SkillXpRate"/>. Set <c>0</c> to disable the cap.
+    ///
+    /// Defends against other mods that bulk-grant skill XP for many actions in one call
+    /// (e.g. a Luck Skill mod summing every rock destroyed by an explosion-on-kill ring,
+    /// where a Quarry blast can produce a single grant of ~1.5M XP). The cap clamps how much
+    /// of that the meta tracker absorbs, while the upstream skill keeps the full grant.
+    /// Vanilla single-action grants top out around a few hundred, so 5000 leaves plenty of
+    /// headroom for legitimate spikes without absorbing runaway batches.
+    /// </summary>
+    public int SkillXpMaxPerCall { get; set; } = 5000;
 }

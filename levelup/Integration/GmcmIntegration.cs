@@ -294,6 +294,12 @@ public class GmcmIntegration
             name: () => T("xp.skill-xp-rate.name"),
             tooltip: () => T("xp.skill-xp-rate.tooltip"),
             min: 0f, max: 2f, interval: 0.05f);
+        api.AddNumberOption(_manifest,
+            getValue: () => _getConfig().XpSources.SkillXpMaxPerCall,
+            setValue: v => _getConfig().XpSources.SkillXpMaxPerCall = v,
+            name: () => T("xp.skill-xp-max-per-call.name"),
+            tooltip: () => T("xp.skill-xp-max-per-call.tooltip"),
+            min: 0, max: 100000, interval: 500);
     }
 
     private void AddCurvePage(IGenericModConfigMenuApi api)
