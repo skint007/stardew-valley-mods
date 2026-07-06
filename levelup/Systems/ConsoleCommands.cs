@@ -55,6 +55,14 @@ public class ConsoleCommands
         commands.Add("levelup_reset",
             "Reset XP and level back to 1.",
             (_, _) => Reset());
+
+        commands.Add("levelup_setbaseline",
+            "Usage: levelup_setbaseline <maxHp> <maxEnergy>\n"
+            + "Manually set the stored vanilla baselines. Use this to recover if a "
+            + "pre-1.3.7 install inflated your max HP / energy. Vanilla defaults are "
+            + "100 HP and 270 energy; add 34 energy per Stardrop eaten and 25 HP for "
+            + "the Combat Mastery cave.",
+            (_, args) => SetBaseline(args));
     }
 
     private void Show()
@@ -139,6 +147,42 @@ public class ConsoleCommands
         _saveData.ResetProgress();
         _bonusApplier.ApplyAll();
         _monitor.Log("Level Up: progress reset to level 1.", LogLevel.Info);
+    }
+
+    private void SetBaseline(string[] args)
+    {
+        if (!RequireWorld()) return;
+        if (args.Length < 2 || !int.TryParse(args[0], out int hp) || !int.TryParse(args[1], out int energy))
+        {
+            _monitor.Log("Usage: levelup_setbaseline <maxHp> <maxEnergy>", LogLevel.Error);
+            return;
+        }
+        if (hp < 1 || energy < 1)
+        {
+            _monitor.Log("Baseline values must be positive.", LogLevel.Error);
+            return;
+        }
+
+        // Zero LastApplied too, so the next ApplyAll doesn't misread the new baseline as
+        // an old-bonus offset and either wipe the vanilla max or refuse to grow it.
+        _saveData.Current.BaselineMaxHp = hp;
+        _saveData.Current.BaselineMaxEnergy = energy;
+        _saveData.Current.LastAppliedMaxHpBonus = 0;
+        _saveData.Current.LastAppliedMaxEnergyBonus = 0;
+
+        // Reset the player's base stats to the new baseline; ApplyAll then re-adds the
+        // current milestone bonus on top, so what the player sees now matches what
+        // future days / config saves will keep.
+        var player = StardewValley.Game1.player;
+        if (player != null)
+        {
+            player.maxHealth = hp;
+            player.maxStamina.Value = energy;
+        }
+
+        _saveData.Save();
+        _bonusApplier.ApplyAll();
+        _monitor.Log($"Level Up: baselines set to {hp} HP / {energy} energy.", LogLevel.Info);
     }
 
     private bool RequireWorld()

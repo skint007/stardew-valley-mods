@@ -283,9 +283,18 @@ public class BonusApplier
 
     /// <summary>
     /// Detect post-baseline vanilla increases to <see cref="Farmer.maxHealth"/> /
-    /// <see cref="Farmer.MaxStamina"/> (Stardrops add +34 EN, the Combat Mastery cave
+    /// <see cref="Farmer.maxStamina"/> (Stardrops add +34 EN, the Combat Mastery cave
     /// reward adds +25 HP, other mods may also bump these) and ratchet the stored
     /// baseline upward so the next ResetToBaseline / ApplyAll doesn't wipe them.
+    ///
+    /// Reads the BASE stats (maxHealth field and maxStamina.Value) rather than the
+    /// buff-inclusive properties (MaxStamina getter = base + buffs.MaxStamina). The
+    /// writer only mutates the base, so a base-vs-base compare is symmetric; using
+    /// player.MaxStamina here would absorb any active buff's MaxStamina contribution
+    /// (from food, rings, or other mods) as if it were a vanilla base bump and
+    /// permanently inflate the baseline on every apply. Vanilla's permanent increases
+    /// (Stardrop, Combat Mastery cave) all mutate the base directly, so we don't lose
+    /// detection by ignoring buffs.
     ///
     /// Only ratchets up, never down: a vanilla "lose max HP" effect should not bake a
     /// permanent decrease into our baseline.
@@ -308,7 +317,7 @@ public class BonusApplier
 
         if (_saveData.Current.BaselineMaxEnergy > 0)
         {
-            int observed = (int)player.MaxStamina;
+            int observed = player.maxStamina.Value;
             int expected = _saveData.Current.BaselineMaxEnergy + _saveData.Current.LastAppliedMaxEnergyBonus;
             int delta = observed - expected;
             if (delta > 0)

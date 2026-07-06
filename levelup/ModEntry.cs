@@ -171,7 +171,7 @@ public class ModEntry : Mod
         if (_saveData.Current.BaselineMaxHp == 0)
             _saveData.Current.BaselineMaxHp = Game1.player.maxHealth;
         if (_saveData.Current.BaselineMaxEnergy == 0)
-            _saveData.Current.BaselineMaxEnergy = (int)Game1.player.MaxStamina;
+            _saveData.Current.BaselineMaxEnergy = Game1.player.maxStamina.Value;
 
         // Recompute level in case curve config changed since last save.
         int recomputed = _calculator.LevelForTotalXp(_saveData.Current.TotalXp);
