@@ -14,6 +14,34 @@ the entry you add below.
 
 ## [Unreleased]
 
+## [1.3.7] - 2026-07-06
+
+### Fixed
+
+- **Regression from 1.3.5 that permanently inflated max HP / max stamina.**
+  `AbsorbVanillaIncreases` compared `player.MaxStamina` (which returns
+  `maxStamina.Value + buffs.MaxStamina`) against `baseline + LastApplied`
+  (base only), and the same asymmetry existed on the initial baseline
+  capture in `OnSaveLoaded`. Any active MaxStamina-adding buff (from food,
+  rings, or another mod) was absorbed as if it were a vanilla base bump,
+  then the ratcheted baseline was written back into `maxStamina.Value` on
+  the next `ResetToBaseline`, inflating the base too. Every subsequent
+  `ApplyAll` (level-up, config save, day start, etc.) repeated the absorb,
+  so max stamina grew by the buff's contribution on each call. Fix: read
+  the base (`maxStamina.Value`, `maxHealth`) on both sides of the compare
+  so the check is symmetric with the writer. Stardrops and the Combat
+  Mastery cave both mutate the base directly, so their absorption still
+  works. Fixes #20.
+
+### Added
+
+- **`levelup_setbaseline <maxHp> <maxEnergy>` console command** so users who
+  already have inflated baselines from a 1.3.5 or 1.3.6 install can put them
+  back manually. Vanilla starting values are 100 HP and 270 energy; add 34
+  energy per Stardrop eaten and 25 HP for the Combat Mastery cave reward.
+  Zeros `LastApplied*` too so the next `ApplyAll` doesn't misread the new
+  baseline as an old-bonus offset.
+
 ## [1.3.6] - 2026-06-13
 
 ### Added

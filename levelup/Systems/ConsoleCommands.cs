@@ -55,6 +55,14 @@ public class ConsoleCommands
         commands.Add("levelup_reset",
             "Reset XP and level back to 1.",
             (_, _) => Reset());
+
+        commands.Add("levelup_setbaseline",
+            "Usage: levelup_setbaseline <maxHp> <maxEnergy>\n"
+            + "Manually set the stored vanilla baselines. Use this to recover if a "
+            + "pre-1.3.7 install inflated your max HP / energy. Vanilla defaults are "
+            + "100 HP and 270 energy; add 34 energy per Stardrop eaten and 25 HP for "
+            + "the Combat Mastery cave.",
+            (_, args) => SetBaseline(args));
     }
 
     private void Show()
@@ -139,6 +147,58 @@ public class ConsoleCommands
         _saveData.ResetProgress();
         _bonusApplier.ApplyAll();
         _monitor.Log("Level Up: progress reset to level 1.", LogLevel.Info);
+    }
+
+    private void SetBaseline(string[] args)
+    {
+        if (!RequireWorld()) return;
+        if (args.Length < 2 || !int.TryParse(args[0], out int hp) || !int.TryParse(args[1], out int energy))
+        {
+            _monitor.Log("Usage: levelup_setbaseline <maxHp> <maxEnergy>", LogLevel.Error);
+            return;
+        }
+        if (hp < 1 || energy < 1)
+        {
+            _monitor.Log("Baseline values must be positive.", LogLevel.Error);
+            return;
+        }
+
+        // Zero LastApplied too, so the next ApplyAll doesn't misread the new baseline as
+        // an old-bonus offset and either wipe the vanilla max or refuse to grow it.
+        _saveData.Current.BaselineMaxHp = hp;
+        _saveData.Current.BaselineMaxEnergy = energy;
+        _saveData.Current.LastAppliedMaxHpBonus = 0;
+        _saveData.Current.LastAppliedMaxEnergyBonus = 0;
+
+        // Load-bearing: write the new base BEFORE ApplyAll. ApplyAll's first step is
+        // AbsorbVanillaIncreases, which reads the base and compares against
+        // BaselineMax* + LastApplied*. If we left the inflated base in place, absorb
+        // would see delta = inflatedBase - newBaseline and ratchet BaselineMax* right
+        // back up, re-inflating the very state this command exists to undo (#20).
+        // ResetToBaseline (which runs after Absorb) then no-ops on these writes since
+        // base already equals the baseline, and the bonus is added cleanly on top.
+        var player = StardewValley.Game1.player;
+        if (player != null)
+        {
+            player.maxHealth = hp;
+            player.maxStamina.Value = energy;
+        }
+
+        _saveData.Save();
+        _bonusApplier.ApplyAll();
+
+        // Clamp current health / stamina to the new max. Recovering users typically
+        // sit near the old inflated max (e.g. stamina 500/500); without this, the HUD
+        // shows current > max (450/270) until vanilla re-clamps on damage or the next
+        // OnDayStarted top-up.
+        if (player != null)
+        {
+            player.health = System.Math.Min(player.health, player.maxHealth);
+            if (player.Stamina > player.MaxStamina)
+                player.Stamina = player.MaxStamina;
+        }
+
+        _monitor.Log($"Level Up: baselines set to {hp} HP / {energy} energy.", LogLevel.Info);
     }
 
     private bool RequireWorld()

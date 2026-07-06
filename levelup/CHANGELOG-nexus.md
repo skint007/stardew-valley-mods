@@ -4,6 +4,14 @@ A short, player-friendly version of the changelog for the Nexus page. The full, 
 
 Note: each bullet is intentionally on a single line so it pastes into Nexus's editor without becoming several bullets (Nexus turns newlines into new list items).
 
+## 1.3.7
+
+Fixed
+- Fixed a regression from 1.3.5 that permanently inflated max stamina (and in some cases max HP) on every level-up and every time you saved the mod settings. The Stardrop-detection logic added in 1.3.5 was reading the max stamina getter, which includes food, ring, and other-mod buffs, and mistaking those buff bonuses for a permanent vanilla bump. It baked them into the baseline and re-added them on every apply, so the value grew forever. Both sides of the check now use the base value only, so buffs no longer leak into the baseline. Big thanks to miraj6, AvatarRuizu0v0, and rafaelhiv for the reports.
+
+Recovery
+- If you played 1.3.5 or 1.3.6 and your max HP / stamina is now higher than it should be, there's a new console command to put it back. In the SMAPI console, type: levelup_setbaseline 100 270 (that's the vanilla starting max HP and max stamina). Add 34 to the second number for each Stardrop you've eaten, and add 25 to the first number if you've done the Combat Mastery cave.
+
 ## 1.3.6
 
 Fixed
