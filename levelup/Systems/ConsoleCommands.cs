@@ -170,9 +170,13 @@ public class ConsoleCommands
         _saveData.Current.LastAppliedMaxHpBonus = 0;
         _saveData.Current.LastAppliedMaxEnergyBonus = 0;
 
-        // Reset the player's base stats to the new baseline; ApplyAll then re-adds the
-        // current milestone bonus on top, so what the player sees now matches what
-        // future days / config saves will keep.
+        // Load-bearing: write the new base BEFORE ApplyAll. ApplyAll's first step is
+        // AbsorbVanillaIncreases, which reads the base and compares against
+        // BaselineMax* + LastApplied*. If we left the inflated base in place, absorb
+        // would see delta = inflatedBase - newBaseline and ratchet BaselineMax* right
+        // back up, re-inflating the very state this command exists to undo (#20).
+        // ResetToBaseline (which runs after Absorb) then no-ops on these writes since
+        // base already equals the baseline, and the bonus is added cleanly on top.
         var player = StardewValley.Game1.player;
         if (player != null)
         {
@@ -182,6 +186,18 @@ public class ConsoleCommands
 
         _saveData.Save();
         _bonusApplier.ApplyAll();
+
+        // Clamp current health / stamina to the new max. Recovering users typically
+        // sit near the old inflated max (e.g. stamina 500/500); without this, the HUD
+        // shows current > max (450/270) until vanilla re-clamps on damage or the next
+        // OnDayStarted top-up.
+        if (player != null)
+        {
+            player.health = System.Math.Min(player.health, player.maxHealth);
+            if (player.Stamina > player.MaxStamina)
+                player.Stamina = player.MaxStamina;
+        }
+
         _monitor.Log($"Level Up: baselines set to {hp} HP / {energy} energy.", LogLevel.Info);
     }
 
