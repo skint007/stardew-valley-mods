@@ -72,6 +72,7 @@ public static class DummyHitPatches
                         continue;
                     _lastHitTick[tile] = Game1.ticks;
 
+                    obj.shakeTimer = 150; // jitter the sprite on hit, like a clicked scarecrow
                     ShowDamage(__instance, tile, minDamage, maxDamage, critChance, critMultiplier, who);
                     _xp.AwardDummyCombatXp(who);
                 }
